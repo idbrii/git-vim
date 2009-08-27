@@ -438,14 +438,20 @@ endfunction
 
 " Show vimdiff with another revision of the file
 function! GitVimDiff(rev)
+    let dir = split(s:SystemGit('rev-parse --show-prefix'), '\n')[0]
     let file = s:Expand('%')
-    let filetype = &filetype
-    if !strlen(a:rev)
-        let object = 'HEAD:' . file
+    if strlen(dir)
+        let path = dir . file
     else
-        let object = a:rev . ':' . file
+        let path = dir
+    endif
+    if !strlen(a:rev)
+        let object = 'HEAD:' . path
+    else
+        let object = a:rev . ':' . path
     endif
 
+    let filetype = &filetype
     diffthis
     vertical new
     let b:is_git_msg_buffer = 1
