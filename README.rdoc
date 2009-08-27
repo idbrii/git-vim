@@ -7,6 +7,7 @@ Git-vim provides:
 
 == Commands
 [:GitAdd <file>]       git-add <file> or current file if not specified.
+[:GitRm <file>]        git-rm <file> or current file if not specified.
 [:GitCommit <args>]    git-commit.
 [:GitStatus]           Show git-status of current file or repository.
 [:GitLog]              Show git-log of current file or repository.

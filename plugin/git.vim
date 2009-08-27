@@ -25,11 +25,12 @@ if !exists('g:git_no_map_default') || !g:git_no_map_default
     nnoremap <Leader>gl :GitLog<Enter>
     nnoremap <Leader>ga :GitAdd<Enter>
     nnoremap <Leader>gA :GitAdd <cfile><Enter>
+    nnoremap <Leader>gr :GitRm<Enter>
+    nnoremap <Leader>gR :GitRm <cfile><Enter>
     nnoremap <Leader>gc :GitCommit<Enter>
     nnoremap <Leader>gp :GitPullRebase<Enter>
     nnoremap <Leader>gg :GitGrep -e '<C-R>=getreg('/')<Enter>'<Enter>
 endif
-
 
 " Ensure b:git_dir exists.
 function! s:GetGitDir()
@@ -233,6 +234,13 @@ function! CompleteGitAddCmd(arg_lead, cmd_line, cursor_pos)
         let opts += ListGitFiles('-c -d -m -o')
     endif
     return filter(opts, 'match(v:val, ''\v'' . a:arg_lead) == 0')
+endfunction
+
+" Stage a file for removal
+function! GitRm(expr)
+    let file = s:Expand(strlen(a:expr) ? a:expr : '%')
+
+    call GitDoCommand('rm ' . file)
 endfunction
 
 " Commit.
@@ -566,6 +574,7 @@ command! -nargs=1 -complete=customlist,CompleteGitCheckoutCmd GitCheckout       
 command! -nargs=* -complete=customlist,CompleteGitDiffCmd     GitDiff             call GitDiff(<q-args>)
 command! -nargs=*                                             GitStatus           call GitStatus(<q-args>)
 command! -nargs=? -complete=customlist,CompleteGitAddCmd      GitAdd              call GitAdd(<f-args>)
+command! -nargs=? GitRm               call GitRm(<q-args>)
 command! -nargs=* GitLog              call GitLog(<q-args>)
 command! -nargs=* GitCommit           call GitCommit(<q-args>)
 command! -nargs=1 GitCatFile          call GitCatFile(<q-args>)
