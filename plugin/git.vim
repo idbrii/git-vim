@@ -436,6 +436,25 @@ function! s:SystemGit(args)
     return system(g:git_bin . ' ' . a:args . '< /dev/null')
 endfunction
 
+" Show vimdiff with another revision of the file
+function! GitVimDiff(rev)
+    let file = s:Expand('%')
+    let filetype = &filetype
+    if !strlen(a:rev)
+        let object = 'HEAD:' . file
+    else
+        let object = a:rev . ':' . file
+    endif
+
+    diffthis
+    vertical new
+    let b:is_git_msg_buffer = 1
+    let content = s:SystemGit('show ' . object)
+    call <SID>OpenGitBuffer(content)
+    let &filetype = filetype
+    diffthis
+endfunction
+
 " Show vimdiff for merge. (experimental)
 function! GitVimDiffMerge()
     let file = s:Expand('%')
@@ -564,6 +583,7 @@ command! -nargs=* GitLog              call GitLog(<q-args>)
 command! -nargs=* GitCommit           call GitCommit(<q-args>)
 command! -nargs=1 GitCatFile          call GitCatFile(<q-args>)
 command!          GitBlame            call GitBlame()
+command! -nargs=? GitVimDiff          call GitVimDiff(<q-args>)
 command!          GitVimDiffMerge     call GitVimDiffMerge()
 command!          GitVimDiffMergeDone call GitVimDiffMergeDone()
 command! -nargs=* GitPull             call GitPull(<q-args>)
