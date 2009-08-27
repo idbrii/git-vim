@@ -18,6 +18,10 @@ if !exists('g:git_highlight_blame')
     let g:git_highlight_blame = 0
 endif
 
+if !exists('g:git_status_show_options')
+    let g:git_status_show_options = 0
+endif
+
 if !exists('g:git_no_map_default') || !g:git_no_map_default
     nnoremap <Leader>gd :GitDiff<Enter>
     nnoremap <Leader>gD :GitDiff --cached<Enter>
@@ -149,17 +153,47 @@ function! CompleteGitDiffCmd(arg_lead, cmd_line, cursor_pos)
     return filter(opts, 'match(v:val, ''\v'' . a:arg_lead) == 0')
 endfunction
 
-" Show Status.
+" Show Status.  This is an interactive buffer geared towards quickly modifying
+" the staging area and creating commits.
 function! GitStatus(args)
     if len(a:args)
         echoe 'GitStatus ignores arguments'
     endif
-    let git_output = s:SystemGit('status')
+
+    if g:git_status_show_options == 1
+        let instructions =  "git-vim GitStatus\n\n"
+
+        let instructions .= "add    = a or Enter        switch to commit = c\n"
+        let instructions .= "diff   = d                 close window     = q\n"
+        let instructions .= "remove = r                 hide options     = ?\n"
+        let instructions .= "reset  = -                                     \n"
+        let instructions .= "\n"
+    else
+        let instructions = "git-vim GitStatus --- type ? for options\n\n"
+    endif
+
+    let git_output = instructions . s:SystemGit('status')
     call <SID>OpenGitBuffer(git_output)
     setlocal filetype=git-status
-    nnoremap <buffer> <Enter> :GitAdd <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
-    nnoremap <buffer> d       :GitDiff <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
-    nnoremap <buffer> -       :silent !git reset HEAD -- =expand('<cfile>')<Enter><Enter>:call <SID>RefreshGitStatus()<Enter>
+
+    " The first time the buffer is opened, move the cursor to a reasonable place
+    " This could be better if someone knows how to move it to the first
+    " non-staged change.
+    normal jjjj
+
+    nnoremap <buffer> <Enter> $:GitAdd  <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
+    nnoremap <buffer> a       $:GitAdd  <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
+    nnoremap <buffer> d       $:GitDiff <cfile><Enter>
+    nnoremap <buffer> r       $:GitRm   <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
+    nnoremap <buffer> -       $:silent  !git reset HEAD -- =expand('<cfile>')<Enter><Enter>:call <SID>RefreshGitStatus()<Enter>
+    nnoremap <buffer> c       :q<Enter>:GitCommit<Enter>i
+    nnoremap <buffer> q       :q<Enter>
+
+    if g:git_status_show_options == 1
+        nmap <buffer> ? :let g:git_status_show_options = 0<Enter>:call <SID>RefreshGitStatus()<Enter>
+    else
+        nmap <buffer> ? :let g:git_status_show_options = 1<Enter>:call <SID>RefreshGitStatus()<Enter>
+    endif
 endfunction
 
 function! s:RefreshGitStatus()

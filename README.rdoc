@@ -29,6 +29,3 @@ Git-vim provides:
 [<Leader>ga] :GitAdd
 [<Leader>gA] :GitAdd <cfile>
 [<Leader>gc] :GitCommit
-
-=== In git-status buffer
-[<Enter>]    :GitAdd <cfile>
