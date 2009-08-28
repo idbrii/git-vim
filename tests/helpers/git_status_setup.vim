@@ -19,3 +19,13 @@ silent ! echo second_file_contents >> second_file.txt; git add .
 " The third file is created, but untracked
 silent ! echo third_file_contents >> third_file.txt;
 
+function! LineContent()
+    normal "ayy
+    return getreg('a')
+endfunction
+
+function! BufferContent()
+    normal ggVG"ayy
+    return getreg('a')
+endfunction
+
