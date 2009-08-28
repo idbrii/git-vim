@@ -1,0 +1,4 @@
+*.msgout
+*.tap
+*_tmpdir
+*.swp
