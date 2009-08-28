@@ -1,6 +1,6 @@
 " Test the options toggling using the ? key
 
-source git_status_helper_setup.vim
+source helpers/git_status_setup.vim
 
 call vimtest#StartTap()
 
@@ -17,6 +17,6 @@ call vimtap#Unlike(getreg('a'), 'type ? for options', 'the message does not appe
 normal ?gg"ayy
 call vimtap#Like(getreg('a'), 'type ? for options', 'help is not shown by default')
 
-source git_status_helper_teardown.vim
+source ../helpers/git_status_teardown.vim
 
 call vimtest#Quit()
