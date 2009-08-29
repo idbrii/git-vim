@@ -1,6 +1,6 @@
 " Test the options toggling using the ? key
 
-source helpers/git_status_setup.vim
+source helpers/status_setup.vim
 
 call vimtest#StartTap()
 
@@ -18,6 +18,6 @@ call vimtap#Like(LineContent(), 'third_file.txt', 'The last line contains the un
 normal a
 call vimtap#Unlike(BufferContent(), 'Untracked files:', 'There are no untracked files')
 
-source ../helpers/git_status_teardown.vim
+source ../helpers/status_teardown.vim
 
 call vimtest#Quit()
