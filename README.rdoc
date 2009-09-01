@@ -18,6 +18,7 @@ Git-vim provides:
 [:GitPush <args>]      git-push. Defaults to +git push origin <current-branch>+.
 [:GitCatFile <args>]   git-cat-file.
 [:Git <args>]          Does any git command.
+[:GitVimDiff <rev>]    Enter vimdiff with another revision of the current file. Revision defaults to HEAD if not specified.
 [:GitVimDiffMerge]     Experimental. Call this command on unmerged file to enter vimdiff mode.
 [:GitVimDiffMergeDone] Call this command after merging.
 
