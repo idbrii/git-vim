@@ -55,9 +55,6 @@ If a command has an [args] argument, it is passed to appropriate git command.
 :GitStatus			Show working tree status.  You can use keymaps
 				in the newly opened buffer to manipulate files.
 
-				<Enter>	will stage file under cursor
-				-	will remove file from index
-
 							*git-vimdiff-merge*
 :GitVimDiffMerge [args]		Show vimdiff for merge.
 

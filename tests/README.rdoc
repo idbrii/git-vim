@@ -15,6 +15,10 @@ in a test harness, printing a summary.
 You can also use the Makefile to run the tests.  To do that, just run:
 make test
 
+Within vim, you'll need to run:
+:!make test
+The raw 'make test' ex command fails, but when run as a shell command it works.
+
 == Compatibility
 These unit tests require Cygwin to run in Windows.  It's not for any
 fundamental reason, just that they use some shell commands to create the
