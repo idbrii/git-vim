@@ -17,6 +17,7 @@ Git-vim provides:
 [:GitPullRebase]       git-pull --rebase.
 [:GitPush <args>]      git-push. Defaults to +git push origin <current-branch>+.
 [:GitCatFile <args>]   git-cat-file.
+[:GitBlame]            git-blame. Shows who is responsible for a change
 [:Git <args>]          Does any git command.
 [:GitVimDiff <rev>]    Enter vimdiff with another revision of the current file. Revision defaults to HEAD if not specified.
 [:GitVimDiffMerge]     Experimental. Call this command on unmerged file to enter vimdiff mode.
@@ -30,3 +31,4 @@ Git-vim provides:
 [<Leader>ga] :GitAdd
 [<Leader>gA] :GitAdd <cfile>
 [<Leader>gc] :GitCommit
+[<Leader>gb] :GitCommit
