@@ -48,3 +48,7 @@ uninstall:
 	@echo
 	@echo "git-vim removed from ${DEST}"
 
+.PHONY: test
+test:
+	@runVimTests tests
+
