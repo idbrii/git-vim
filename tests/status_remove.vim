@@ -8,7 +8,7 @@ call vimtest#StartTap()
 call vimtap#Plan(2)
 
 " Remove the file in the filesystem
-silent !rm ../status_tmpdir/second_file.txt
+silent !rm ../git_tmpdir/second_file.txt
 
 GitStatus
 
