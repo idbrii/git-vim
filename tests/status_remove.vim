@@ -2,10 +2,7 @@
 " remove it within GitStatus
 
 source helpers/status_setup.vim
-
-call vimtest#StartTap()
-
-call vimtap#Plan(2)
+call StartTapWithPlan(2)
 
 " Remove the file in the filesystem
 silent !rm ../git_tmpdir/second_file.txt
@@ -21,5 +18,3 @@ normal r
 call vimtap#Unlike(BufferContent(), 'deleted', 'The file no longer appears in GitStatus')
 
 source ../helpers/status_teardown.vim
-
-call vimtest#Quit()

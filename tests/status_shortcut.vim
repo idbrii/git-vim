@@ -1,10 +1,7 @@
 " Test that the leader shortcut works with two different leaders
 
 source helpers/status_setup.vim
-
-call vimtest#StartTap()
-
-call vimtap#Plan(3)
+call StartTapWithPlan(3)
 
 edit first_file.txt
 
@@ -28,4 +25,3 @@ normal ,gs
 call vimtap#Like(BufferContent(), 'Untracked files:', 'The git status buffer is showing')
 
 source ../helpers/status_teardown.vim
-call vimtest#Quit()

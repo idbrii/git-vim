@@ -2,10 +2,7 @@
 " correctly.
 
 source helpers/vimdiff_setup.vim
-
-call vimtest#StartTap()
-
-call vimtap#Plan(3)
+call StartTapWithPlan(3)
 
 edit first_file.txt
 
@@ -21,5 +18,3 @@ normal G
 call vimtap#Like(LineContent(), 'another line', 'The last line is the appended content')
 
 source ../helpers/vimdiff_teardown.vim
-
-call vimtest#Quit()

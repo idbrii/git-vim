@@ -1,10 +1,7 @@
 " Test the options toggling using the ? key
 
 source helpers/status_setup.vim
-
-call vimtest#StartTap()
-
-call vimtap#Plan(3)
+call StartTapWithPlan(3)
 
 GitStatus
 
@@ -19,5 +16,3 @@ normal a
 call vimtap#Unlike(BufferContent(), 'Untracked files:', 'There are no untracked files')
 
 source ../helpers/status_teardown.vim
-
-call vimtest#Quit()

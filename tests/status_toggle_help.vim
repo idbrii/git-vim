@@ -1,10 +1,7 @@
 " Test the options toggling using the ? key
 
 source helpers/status_setup.vim
-
-call vimtest#StartTap()
-
-call vimtap#Plan(3)
+call StartTapWithPlan(3)
 
 GitStatus
 
@@ -18,5 +15,3 @@ normal ?
 call vimtap#Like(LineContent(), 'type ? for options', 'help is not shown by default')
 
 source ../helpers/status_teardown.vim
-
-call vimtest#Quit()

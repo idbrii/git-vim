@@ -1,1 +1,1 @@
-call SharedTeardown
+source ../helpers/teardown.vim
