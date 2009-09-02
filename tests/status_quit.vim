@@ -1,4 +1,4 @@
-" Run GitStatus, but then hit the q key, quitting it.
+" Test that hitting the q key in the GitStatus buffer will quit it.
 
 source helpers/status_setup.vim
 call StartTapWithPlan(2)

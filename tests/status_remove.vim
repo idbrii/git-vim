@@ -1,5 +1,4 @@
-" Remove a file in the filesystem, then use the 'r' key to interactively
-" remove it within GitStatus
+" Test using the 'r' key to interactively remove a deleted file within GitStatus
 
 source helpers/status_setup.vim
 call StartTapWithPlan(2)

@@ -1,5 +1,4 @@
-" Add another line to the first_file.txt file then test that GitVimDiff works
-" correctly.
+" Test that GitVimDiff works correctly when adding a single line to a file.
 
 source helpers/vimdiff_setup.vim
 call StartTapWithPlan(3)

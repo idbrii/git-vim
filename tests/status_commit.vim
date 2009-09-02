@@ -1,4 +1,4 @@
-" Turn the status buffer into a commit buffer by hitting the c key
+" Test that the status buffer turns into a commit buffer by hitting the c key
 
 source helpers/status_setup.vim
 call StartTapWithPlan(2)
