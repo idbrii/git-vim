@@ -494,7 +494,7 @@ endfunction
 " Show vimdiff with another revision of the file
 function! GitVimDiff(rev)
     let dir = s:SystemGit('rev-parse --show-prefix')
-    let file = s:Expand('%:t')
+    let file = s:Expand('%')
     if strlen(dir)
         if dir[-1:] == "\n"
             let path = dir[0:-2]

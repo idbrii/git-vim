@@ -15,6 +15,11 @@ silent ! git init
 silent ! echo first_file_contents >> first_file.txt; git add .
 silent ! git commit -m "Committed the first_file"
 
+" The nested file is added and committed
+silent ! mkdir directory
+silent ! echo nested_file_contents >> directory/nested_file.txt; git add .
+silent ! git commit -m "Committed the nested_file"
+
 " The second file is added but not committed
 silent ! echo second_file_contents >> second_file.txt; git add .
 
