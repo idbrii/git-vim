@@ -30,5 +30,7 @@ Git-vim provides:
 [<Leader>gl] :GitLog
 [<Leader>ga] :GitAdd
 [<Leader>gA] :GitAdd <cfile>
+[<Leader>gr] :GitRm
+[<Leader>gR] :GitRm <cfile>
 [<Leader>gc] :GitCommit
 [<Leader>gb] :GitCommit

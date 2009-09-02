@@ -18,6 +18,10 @@ If a command has an [args] argument, it is passed to appropriate git command.
 :GitAdd [afile]			Stage changes in [afile] or current file
 				if [afile] is not specified.
 
+							*git-rm*
+:GitRm [afile]			Remove [afile] or current file if [afile] is
+				not specified.
+
 							*git-blame*
 :GitBlame			Show what revision and author last modified
 				each line of current file.
