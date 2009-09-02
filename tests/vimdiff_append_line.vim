@@ -1,11 +1,12 @@
 " Test that GitVimDiff works correctly when adding a single line to a file.
 
 source helpers/vimdiff_setup.vim
-call StartTapWithPlan(3)
+call StartTapWithPlan(2)
 
+" Append another line to the first file so you'll be able to diff it
 edit first_file.txt
-
-call vimtap#Like(BufferContent(), 'another line', 'The another line has been appended by the setup')
+normal oThis is another line of text
+write
 
 GitVimDiff
 normal G

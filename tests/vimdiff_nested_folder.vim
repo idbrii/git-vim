@@ -4,7 +4,7 @@ source helpers/vimdiff_setup.vim
 call StartTapWithPlan(2)
 
 " Move into the nested directory
-cd directory
+cd nested_directory
 edit nested_file.txt
 normal oThis is another line of text
 write

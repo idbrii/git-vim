@@ -3,7 +3,7 @@
 source helpers/vimdiff_setup.vim
 call StartTapWithPlan(2)
 
-edit directory/nested_file.txt
+edit nested_directory/nested_file.txt
 normal oThis is another line of text
 write
 
