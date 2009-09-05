@@ -240,6 +240,33 @@ function! GitGrep(args)
     call <SID>OpenGitGrepQuickFix(git_output)
 endfunction
 
+" Split complex git command lines, like:
+" git-add -opt1 -opt2 -- filename1 filename2
+" into an array of option and file arrays
+function! GitParseOptsAndFiles(expr)
+    let opts = []
+    let files = []
+    if strlen(a:expr)
+        let lookForOptions = 1
+        for item in s:SplitCmd(a:expr)
+            if lookForOptions && item =~ '^[''"]*-'
+                if item =~ '^[''"]*--[''"]*$'
+                    let lookForOptions = 0
+                else
+                    let opts += [ item ]
+                endif
+            else
+                let files += [ s:Expand(item) ]
+            endif
+        endfor
+    else
+        let files += [ s:Expand('%') ]
+    endif
+
+    return [opts, files]
+
+endfunction
+
 
 " Add file to index.
 function! GitAdd(expr)
