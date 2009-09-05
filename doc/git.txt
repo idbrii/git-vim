@@ -77,6 +77,7 @@ All mappings use <Leader> to avoid conflicts with default commands.  See
 <Leader>gl		:GitLog
 <Leader>ga		:GitAdd
 <Leader>gA		:GitAdd
+<Leader>gr		:GitRm
 <Leader>gc		:GitCommit
 <Leader>gp		:GitPullRebase
 
