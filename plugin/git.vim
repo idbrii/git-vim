@@ -118,7 +118,24 @@ endfunction
 
 " Show diff.
 function! GitDiff(args)
-    let git_output = s:SystemGit('diff ' . a:args . ' -- ' . s:Expand('%'))
+
+    let myfile = ""
+    let processed_args = ""
+
+    " Anything not starting with a - is likely the file name 
+    let words = split(a:args)
+    for word in words
+        if word !~ '^-'
+            let myfile = word
+        else
+            let processed_args = processed_args . " " . word
+        endif
+    endfor
+
+    " If no filenames were sent in the arguments 
+    let myfile = s:Expand(strlen(myfile) ? myfile : '%')
+    let diff_command = 'diff ' . processed_args . ' -- ' . myfile
+    let git_output = s:SystemGit(diff_command)
     if !strlen(git_output)
         echo "No output from git command"
         return
@@ -164,10 +181,10 @@ function! GitStatus(args)
     if g:git_status_show_options == 1
         let instructions =  "git-vim GitStatus\n\n"
 
-        let instructions .= "add    = a or Enter        switch to commit = c\n"
-        let instructions .= "diff   = d                 close window     = q\n"
-        let instructions .= "remove = r                 hide options     = ?\n"
-        let instructions .= "reset  = -                                     \n"
+        let instructions .= "add    = a or Enter        edit             = e\n"
+        let instructions .= "diff   = d                 switch to commit = c\n"
+        let instructions .= "remove = r                 close window     = q\n"
+        let instructions .= "reset  = -                 hide options     = ?\n"
         let instructions .= "\n"
     else
         let instructions = "git-vim GitStatus --- type ? for options\n\n"
@@ -187,6 +204,7 @@ function! GitStatus(args)
     nnoremap <buffer> d       $:GitDiff <cfile><Enter>
     nnoremap <buffer> r       $:GitRm   <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
     nnoremap <buffer> -       $:silent  !git reset HEAD -- =expand('<cfile>')<Enter><Enter>:call <SID>RefreshGitStatus()<Enter>
+    nnoremap <buffer> e       $:e       <cfile><Enter>
     nnoremap <buffer> c       :q<Enter>:GitCommit<Enter>i
     nnoremap <buffer> q       :q<Enter>
 
