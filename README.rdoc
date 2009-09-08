@@ -33,4 +33,7 @@ Git-vim provides:
 [<Leader>gr] :GitRm
 [<Leader>gR] :GitRm <cfile>
 [<Leader>gc] :GitCommit
-[<Leader>gb] :GitCommit
+[<Leader>gb] :GitBlame
+
+== License
+The MIT License
