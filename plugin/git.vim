@@ -119,22 +119,9 @@ endfunction
 " Show diff.
 function! GitDiff(args)
 
-    let myfile = ""
-    let processed_args = ""
+    let [opts, files] = GitParseOptsAndFiles(a:args)
+    let diff_command = 'diff ' . join(opts, ' ') . ' -- ' . join(files, ' ')
 
-    " Anything not starting with a - is likely the file name 
-    let words = split(a:args)
-    for word in words
-        if word !~ '^-'
-            let myfile = word
-        else
-            let processed_args = processed_args . " " . word
-        endif
-    endfor
-
-    " If no filenames were sent in the arguments 
-    let myfile = s:Expand(strlen(myfile) ? myfile : '%')
-    let diff_command = 'diff ' . processed_args . ' -- ' . myfile
     let git_output = s:SystemGit(diff_command)
     if !strlen(git_output)
         echo "No output from git command"
@@ -241,7 +228,7 @@ function! GitGrep(args)
 endfunction
 
 " Split complex git command lines, like:
-" git-add -opt1 -opt2 -- filename1 filename2
+" GitAdd -opt1 -opt2 -- filename1 filename2
 " into an array of option and file arrays
 function! GitParseOptsAndFiles(expr)
     let opts = []
@@ -270,30 +257,22 @@ endfunction
 
 " Add file to index.
 function! GitAdd(expr)
-    let args = []
     let interactive = 0
-    if strlen(a:expr)
-        let lookForOptions = 1
-        for item in s:SplitCmd(a:expr)
-            if lookForOptions && item =~ '^[''"]*-'
-                if item =~ '\v^[''"]*-(i|p|-interactive|-patch)'
-                    let interactive = 1
-                elseif item =~ '^[''"]*--[''"]*$'
-                    let lookForOptions = 0
-                endif
-                let args += [ item ]
-            else
-                let args += [ s:Expand(item) ]
-            endif
-        endfor
-    else
-        let args += [ s:Expand('%') ]
-    endif
+
+    let [opts, files] = GitParseOptsAndFiles(a:expr)
+
+    for opt in opts
+        if opt =~ '\v^(i|p|interactive|patch)$'
+            let interactive = 1
+        end
+    endfor
+    
+    let command = ' add ' . join(opts) . ' -- ' . join(files)
 
     if interactive
-        execute '!' . g:git_bin . ' add ' . join(args)
+        execute '!' . g:git_bin . command
     else
-        call GitDoCommand('add ' . join(args))
+        call GitDoCommand(command)
     endif
 endfunction
 
