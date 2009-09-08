@@ -30,18 +30,4 @@ silent ! echo third_file_contents >> third_file.txt;
 " We also have a few helper functions which make reading the tests a bit
 " easier.
 "
-
-function! StartTapWithPlan(plan)
-    call vimtest#StartTap()
-    call vimtap#Plan(a:plan)
-endfunction
-
-function! LineContent()
-    normal "ayy
-    return getreg('a')
-endfunction
-
-function! BufferContent()
-    normal ggVG"ayy
-    return getreg('a')
-endfunction
+source ../helpers/setup_functions.vim
