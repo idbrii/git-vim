@@ -124,7 +124,7 @@ endfunction
 function! GitDiff(args)
 
     let [opts, files] = GitParseOptsAndFiles(a:args)
-    let diff_command = 'diff ' . join(opts, ' ') . ' -- ' . join(files, ' ')
+    let diff_command = 'diff ' . join(opts) . ' -- ' . join(files)
 
     let git_output = s:SystemGit(diff_command)
     if !strlen(git_output)
@@ -266,11 +266,11 @@ function! GitAdd(expr)
     let [opts, files] = GitParseOptsAndFiles(a:expr)
 
     for opt in opts
-        if opt =~ '\v^(i|p|interactive|patch)$'
+        if opt =~ '\v^(-i|-p|--interactive|--patch)$'
             let interactive = 1
         end
     endfor
-    
+
     let command = ' add ' . join(opts) . ' -- ' . join(files)
 
     if interactive
