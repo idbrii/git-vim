@@ -22,6 +22,10 @@ if !exists('g:git_highlight_blame')
     let g:git_highlight_blame = 0
 endif
 
+if !exists('g:git_blame_width')
+    let g:git_blame_width = 20
+endif
+
 if !exists('g:git_no_map_default') || !g:git_no_map_default
     nnoremap <Leader>gd :GitDiff<Enter>
     nnoremap <Leader>gD :GitDiff --cached<Enter>
@@ -209,7 +213,7 @@ function! GitBlame()
 
     setlocal modifiable
     silent %s/\d\d\d\d\zs \+\d\+).*//
-    vertical resize 20
+    execute 'vertical resize' g:git_blame_width
     setlocal nomodifiable
     setlocal nowrap scrollbind
 
