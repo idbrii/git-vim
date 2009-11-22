@@ -7,6 +7,7 @@ Git-vim provides:
 
 == Commands
 [:GitAdd <file>]       git-add <file> or current file if not specified.
+[:GitRm <file>]        git-rm <file> or current file if not specified.
 [:GitCommit <args>]    git-commit.
 [:GitStatus]           Show git-status of current file or repository.
 [:GitLog]              Show git-log of current file or repository.
@@ -16,7 +17,9 @@ Git-vim provides:
 [:GitPullRebase]       git-pull --rebase.
 [:GitPush <args>]      git-push. Defaults to +git push origin <current-branch>+.
 [:GitCatFile <args>]   git-cat-file.
+[:GitBlame]            git-blame. Shows who is responsible for a change
 [:Git <args>]          Does any git command.
+[:GitVimDiff <rev>]    Enter vimdiff with another revision of the current file. Revision defaults to HEAD if not specified.
 [:GitVimDiffMerge]     Experimental. Call this command on unmerged file to enter vimdiff mode.
 [:GitVimDiffMergeDone] Call this command after merging.
 
@@ -27,10 +30,10 @@ Git-vim provides:
 [<Leader>gl] :GitLog
 [<Leader>ga] :GitAdd
 [<Leader>gA] :GitAdd <cfile>
+[<Leader>gr] :GitRm
+[<Leader>gR] :GitRm <cfile>
 [<Leader>gc] :GitCommit
-
-=== In git-status buffer
-[<Enter>]    :GitAdd <cfile>
+[<Leader>gb] :GitBlame
 
 == License
 The MIT License
