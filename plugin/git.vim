@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 18 Jan 2009
+" Last Modified: 17 Dec 2009
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,11 +23,13 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.0, for Vim 7.0
+" Version: 1.1, for Vim 7.0
 "-----------------------------------------------------------------------------
 " ChangeLog: "{{{
 "   1.1:
 "     - Merged latest version.
+"     - Supported vimproc.
+"     - Added g:git_use_vimproc option.
 "
 "   1.0:
 "     - Initial version.
@@ -60,6 +62,10 @@ endif
 
 if !exists('g:git_highlight_blame')
     let g:git_highlight_blame = 0
+endif
+
+if !exists('g:git_use_vimproc')
+    let g:git_use_vimproc = 0
 endif
 
 if !exists('g:git_no_map_default') || !g:git_no_map_default
@@ -364,7 +370,12 @@ function! GitDoCommand(args)"{{{
 endfunction"}}}
 
 function! s:SystemGit(args)"{{{
-    return system(g:git_bin . ' ' . a:args)
+    let l:command = g:git_bin . ' ' . a:args
+    if g:git_use_vimproc
+        return vimproc#system(l:command)
+    else
+        return system(l:command)
+    endif
 endfunction"}}}
 
 " Show vimdiff for merge. (experimental)
