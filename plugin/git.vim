@@ -1,6 +1,46 @@
-" Author:  motemen <motemen@gmail.com>
-" License: The MIT License
-" URL:     http://github.com/motemen/git-vim/
+"=============================================================================
+" FILE: git.vim
+" AUTHOR: motemen <motemen@gmail.com>(Original)
+"         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
+" Last Modified: 18 Jan 2009
+" License: MIT license  {{{
+"     Permission is hereby granted, free of charge, to any person obtaining
+"     a copy of this software and associated documentation files (the
+"     "Software"), to deal in the Software without restriction, including
+"     without limitation the rights to use, copy, modify, merge, publish,
+"     distribute, sublicense, and/or sell copies of the Software, and to
+"     permit persons to whom the Software is furnished to do so, subject to
+"     the following conditions:
+"
+"     The above copyright notice and this permission notice shall be included
+"     in all copies or substantial portions of the Software.
+"
+"     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+"     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+"     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+"     IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+"     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+"     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+"     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+" }}}
+" Version: 1.0, for Vim 7.0
+"-----------------------------------------------------------------------------
+" ChangeLog: "{{{
+"   1.1:
+"     - Merged latest version.
+"
+"   1.0:
+"     - Initial version.
+"     - Complete settings.
+""}}}
+"-----------------------------------------------------------------------------
+" TODO: "{{{
+"     - Make built-in command autoload.
+""}}}
+" Bugs"{{{
+"     -
+""}}}
+"=============================================================================
 
 if !exists('g:git_command_edit')
     let g:git_command_edit = 'new'
@@ -34,7 +74,7 @@ if !exists('g:git_no_map_default') || !g:git_no_map_default
 endif
 
 " Ensure b:git_dir exists.
-function! s:GetGitDir()
+function! s:GetGitDir()"{{{
     if !exists('b:git_dir')
         let b:git_dir = s:SystemGit('rev-parse --git-dir')
         if !v:shell_error
@@ -42,11 +82,11 @@ function! s:GetGitDir()
         endif
     endif
     return b:git_dir
-endfunction
+endfunction"}}}
 
 " Returns current git branch.
 " Call inside 'statusline' or 'titlestring'.
-function! GitBranch()
+function! GitBranch()"{{{
     let git_dir = <SID>GetGitDir()
 
     if strlen(git_dir) && filereadable(git_dir . '/HEAD')
@@ -59,20 +99,20 @@ function! GitBranch()
     else
         return ''
     endif
-endfunction
+endfunction"}}}
 
 " List all git local branches.
-function! ListGitBranches(arg_lead, cmd_line, cursor_pos)
+function! ListGitBranches(arg_lead, cmd_line, cursor_pos)"{{{
     let branches = split(s:SystemGit('branch'), '\n')
     if v:shell_error
         return []
     endif
 
     return map(branches, 'matchstr(v:val, ''^[* ] \zs.*'')')
-endfunction
+endfunction"}}}
 
 " List all git commits.
-function! ListGitCommits(arg_lead, cmd_line, cursor_pos)
+function! ListGitCommits(arg_lead, cmd_line, cursor_pos)"{{{
     let commits = split(s:SystemGit('log --pretty=format:%h'))
     if v:shell_error
         return []
@@ -89,10 +129,68 @@ function! ListGitCommits(arg_lead, cmd_line, cursor_pos)
     endif
 
     return filter(commits, 'match(v:val, ''\v'' . a:arg_lead) == 0')
-endfunction
+endfunction"}}}
+
+" List all git commands.
+function! ListGitCommands(arg_lead, cmd_line, cursor_pos)"{{{
+    let l:cmd = split(a:cmd_line)
+    let l:len_cmd = len(l:cmd)
+
+    if l:len_cmd <= 1
+        " Commands name completion.
+        let l:filter_cmd = printf('v:val =~ "^%s"', a:arg_lead)
+        return filter(['add', 'bisect', 'branch', 'checkout', 'clone', 'commit', 'diff', 'fetch',
+                    \'grep', 'init', 'log', 'merge', 'mv', 'pull', 'push', 'rebase', 'reset', 'rm', 
+                    \'show', 'status', 'tag'], l:filter_cmd)
+    else
+        " Commands argments completion.
+        let l:cmdname = l:cmd[1]
+        if l:cmdname == 'add' || l:cmdname == 'mv' || l:cmdname == 'rm'
+            let l:arg = get(l:cmd, 2, '')
+            return split(glob(l:arg.'*'), '\n')
+        elseif l:cmdname == 'branch'
+            return ListGitBranches(a:arg_lead, a:cmd_line, a:cursor_pos)
+        elseif l:cmdname == 'checkout' || l:cmdname == 'diff'
+            return ListGitCommits(a:arg_lead, a:cmd_line, a:cursor_pos)
+        elseif l:cmdname == 'clone'
+            return []
+        elseif l:cmdname == 'commit'
+            return []
+        elseif l:cmdname == 'fetch'
+            return []
+        elseif l:cmdname == 'grep'
+            return []
+        elseif l:cmdname == 'init'
+            return []
+        elseif l:cmdname == 'log'
+            return []
+        elseif l:cmdname == 'merge'
+            return []
+        elseif l:cmdname == 'pull'
+            return []
+        elseif l:cmdname == 'push'
+            return []
+        elseif l:cmdname == 'rebase'
+            return []
+        elseif l:cmdname == 'reset'
+            return []
+        elseif l:cmdname == 'show'
+            return []
+        elseif l:cmdname == 'status'
+            return []
+        elseif l:cmdname == 'tag'
+            return []
+        else
+            let l:filter_cmd = printf('v:val =~ "^%s"', a:arg_lead)
+            return filter(['add', 'bisect', 'branch', 'checkout', 'clone', 'commit', 'diff', 'fetch',
+                        \'grep', 'init', 'log', 'merge', 'mv', 'pull', 'push', 'rebase', 'reset', 'rm', 
+                        \'show', 'status', 'tag'], l:filter_cmd)
+        endif
+    endif
+endfunction"}}}
 
 " Show diff.
-function! GitDiff(args)
+function! GitDiff(args)"{{{
     let git_output = s:SystemGit('diff ' . a:args . ' -- ' . s:Expand('%'))
     if !strlen(git_output)
         echo "No output from git command"
@@ -101,39 +199,39 @@ function! GitDiff(args)
 
     call <SID>OpenGitBuffer(git_output)
     setlocal filetype=git-diff
-endfunction
+endfunction"}}}
 
 " Show Status.
-function! GitStatus()
+function! GitStatus()"{{{
     let git_output = s:SystemGit('status')
     call <SID>OpenGitBuffer(git_output)
     setlocal filetype=git-status
     nnoremap <buffer> <Enter> :GitAdd <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
     nnoremap <buffer> -       :silent !git reset HEAD -- =expand('<cfile>')<Enter><Enter>:call <SID>RefreshGitStatus()<Enter>
-endfunction
+endfunction"}}}
 
-function! s:RefreshGitStatus()
+function! s:RefreshGitStatus()"{{{
     let pos_save = getpos('.')
     GitStatus
     call setpos('.', pos_save)
-endfunction
+endfunction"}}}
 
 " Show Log.
-function! GitLog(args)
+function! GitLog(args)"{{{
     let git_output = s:SystemGit('log ' . a:args . ' -- ' . s:Expand('%'))
     call <SID>OpenGitBuffer(git_output)
     setlocal filetype=git-log
-endfunction
+endfunction"}}}
 
 " Add file to index.
-function! GitAdd(expr)
+function! GitAdd(expr)"{{{
     let file = s:Expand(strlen(a:expr) ? a:expr : '%')
 
     call GitDoCommand('add ' . file)
-endfunction
+endfunction"}}}
 
 " Commit.
-function! GitCommit(args)
+function! GitCommit(args)"{{{
     let git_dir = <SID>GetGitDir()
 
     let args = a:args
@@ -154,15 +252,15 @@ function! GitCommit(args)
         autocmd BufWritePre  <buffer> g/^#\|^\s*$/d | setlocal fileencoding=utf-8
         execute printf("autocmd BufWritePost <buffer> call GitDoCommand('commit %s -F ' . expand('%%')) | autocmd! GitCommit * <buffer>", args)
     augroup END
-endfunction
+endfunction"}}}
 
 " Checkout.
-function! GitCheckout(args)
+function! GitCheckout(args)"{{{
     call GitDoCommand('checkout ' . a:args)
-endfunction
+endfunction"}}}
 
 " Push.
-function! GitPush(args)
+function! GitPush(args)"{{{
 "   call GitDoCommand('push ' . a:args)
     " Wanna see progress...
     let args = a:args
@@ -170,17 +268,17 @@ function! GitPush(args)
         let args = 'origin ' . GitBranch()
     endif
     execute '!' g:git_bin 'push' args
-endfunction
+endfunction"}}}
 
 " Pull.
-function! GitPull(args)
+function! GitPull(args)"{{{
 "   call GitDoCommand('pull ' . a:args)
     " Wanna see progress...
     execute '!' g:git_bin 'pull' a:args
-endfunction
+endfunction"}}}
 
 " Show commit, tree, blobs.
-function! GitCatFile(file)
+function! GitCatFile(file)"{{{
     let file = s:Expand(a:file)
     let git_output = s:SystemGit('cat-file -p ' . file)
     if !strlen(git_output)
@@ -189,10 +287,10 @@ function! GitCatFile(file)
     endif
 
     call <SID>OpenGitBuffer(git_output)
-endfunction
+endfunction"}}}
 
 " Show revision and author for each line.
-function! GitBlame()
+function! GitBlame()"{{{
     let git_output = s:SystemGit('blame -- ' . expand('%'))
     if !strlen(git_output)
         echo "No output from git command"
@@ -221,18 +319,18 @@ function! GitBlame()
     setlocal nowrap scrollbind
 
     syncbind
-endfunction
+endfunction"}}}
 
 " Experimental
-function! s:DoHighlightGitBlame()
+function! s:DoHighlightGitBlame()"{{{
     for l in range(1, line('$'))
         let line = getline(l)
         let [commit, author] = matchlist(line, '\(\x\+\) (\(.\{-}\)\s* \d\d\d\d-\d\d-\d\d')[1:2]
         call s:LoadSyntaxRuleFor({ 'author': author })
     endfor
-endfunction
+endfunction"}}}
 
-function! s:LoadSyntaxRuleFor(params)
+function! s:LoadSyntaxRuleFor(params)"{{{
     let author = a:params.author
     let name = 'gitBlameAuthor_' . substitute(author, '\s', '_', 'g')
     if (!hlID(name))
@@ -251,9 +349,9 @@ function! s:LoadSyntaxRuleFor(params)
         endif
         execute 'syntax match' name '"\V\^\x\+ (' . escape(author, '\') . '\.\*"'
     endif
-endfunction
+endfunction"}}}
 
-function! GitDoCommand(args)
+function! GitDoCommand(args)"{{{
     let git_output = s:SystemGit(a:args)
     let git_output = substitute(git_output, '\n*$', '', '')
     if v:shell_error
@@ -263,14 +361,14 @@ function! GitDoCommand(args)
     else
         echo git_output
     endif
-endfunction
+endfunction"}}}
 
-function! s:SystemGit(args)
+function! s:SystemGit(args)"{{{
     return system(g:git_bin . ' ' . a:args)
-endfunction
+endfunction"}}}
 
 " Show vimdiff for merge. (experimental)
-function! GitVimDiffMerge()
+function! GitVimDiffMerge()"{{{
     let file = s:Expand('%')
     let filetype = &filetype
     let t:git_vimdiff_original_bufnr = bufnr('%')
@@ -293,9 +391,9 @@ function! GitVimDiffMerge()
     0d
     diffthis
     let &filetype = filetype
-endfunction
+endfunction"}}}
 
-function! GitVimDiffMergeDone()
+function! GitVimDiffMergeDone()"{{{
     if exists('t:git_vimdiff_original_bufnr') && exists('t:git_vimdiff_buffers')
         if getbufline(t:git_vimdiff_buffers[0], 1, '$') == getbufline(t:git_vimdiff_buffers[1], 1, '$')
             execute 'sbuffer ' . t:git_vimdiff_original_bufnr
@@ -311,9 +409,9 @@ function! GitVimDiffMergeDone()
             echohl None
         endif
     endif
-endfunction
+endfunction"}}}
 
-function! s:OpenGitBuffer(content)
+function! s:OpenGitBuffer(content)"{{{
     if exists('b:is_git_msg_buffer') && b:is_git_msg_buffer
         enew!
     else
@@ -328,25 +426,25 @@ function! s:OpenGitBuffer(content)
     setlocal nomodifiable
 
     let b:is_git_msg_buffer = 1
-endfunction
+endfunction"}}}
 
-function! s:Expand(expr)
+function! s:Expand(expr)"{{{
     if has('win32')
         return substitute(expand(a:expr), '\', '/', 'g')
     else
         return expand(a:expr)
     endif
-endfunction
+endfunction"}}}
 
-command! -nargs=1 -complete=customlist,ListGitCommits GitCheckout call GitCheckout(<q-args>)
-command! -nargs=* -complete=customlist,ListGitCommits GitDiff     call GitDiff(<q-args>)
+command! -nargs=1 -complete=customlist,ListGitCommits   GitCheckout call GitCheckout(<q-args>)
+command! -nargs=* -complete=customlist,ListGitCommits   GitDiff     call GitDiff(<q-args>)
 command!          GitStatus           call GitStatus()
-command! -nargs=? GitAdd              call GitAdd(<q-args>)
+command! -nargs=? -complete=file                        GitAdd      call GitAdd(<q-args>)
 command! -nargs=* GitLog              call GitLog(<q-args>)
 command! -nargs=* GitCommit           call GitCommit(<q-args>)
 command! -nargs=1 GitCatFile          call GitCatFile(<q-args>)
 command!          GitBlame            call GitBlame()
-command! -nargs=+ Git                 call GitDoCommand(<q-args>)
+command! -nargs=+ -complete=customlist,ListGitCommands  Git         call GitDoCommand(<q-args>)
 command!          GitVimDiffMerge     call GitVimDiffMerge()
 command!          GitVimDiffMergeDone call GitVimDiffMergeDone()
 command! -nargs=* GitPull             call GitPull(<q-args>)
