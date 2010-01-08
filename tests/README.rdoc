@@ -21,7 +21,7 @@ Within vim, you'll need to run:
 The raw 'make test' ex command fails, but when run as a shell command it works.
 
 == Compatibility
-These unit tests require Cygwin to run in Windows.  It's not for any
-fundamental reason, just that they use some shell commands to create the
-directory under git control.  If someone wanted to put in the effort, the
-tests could be made cross platform relatively easily.
+These unit tests were developed on a Linux system.  They require Cygwin to
+run in Windows.  It's not for any fundamental reason, just that they use some
+shell commands to create the directory under git control.  If someone wanted to
+put in the effort, the tests could be made cross platform relatively easily.
