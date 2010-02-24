@@ -28,7 +28,12 @@
 
 " Ensure b:git_dir exists.
 function! s:get_git_dir()"{{{
-  return finddir('.git', '.;')
+  let l:git_dir = finddir('.git', ';')
+  if l:git_dir != ''
+    let l:git_dir = fnamemodify(l:git_dir, ':p')
+  endif
+
+  return l:git_dir
 endfunction"}}}
 
 " Returns current git branch.
