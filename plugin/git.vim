@@ -28,6 +28,7 @@
 " ChangeLog: "{{{
 "   1.4:
 "     - Fixed git current directory bug.
+"     - Fixed GitCommit bug.
 "
 "   1.3:
 "     - Use autoload.

@@ -205,13 +205,18 @@ function! git#commit(args)"{{{
   let l:git_output = s:system('git commit ' . l:args)
   let $EDITOR = l:editor_save
 
-  execute printf('%s %sCOMMIT_EDITMSG', g:git_command_edit, git_dir)
+  execute printf('%s %s/COMMIT_EDITMSG', g:git_command_edit, git_dir)
   setlocal filetype=git-status bufhidden=wipe
+  let b:git_commit_args = a:args
   augroup GitCommit
     autocmd!
     autocmd BufWritePre  <buffer> g/^\s*#/d | setlocal fileencoding=utf-8
-    execute printf("autocmd BufWritePost <buffer> call git#do_command('commit %s -F ' . expand('%%')) | autocmd! GitCommit * <buffer>", args)
+    autocmd BufWritePost <buffer> call s:write_commit_message()
   augroup END
+endfunction"}}}
+function! s:write_commit_message()"{{{
+  call git#do_command('commit ' . b:git_commit_args . ' -F ' . expand('%'))
+  autocmd! GitCommit * <buffer>
 endfunction"}}}
 
 " Checkout.
