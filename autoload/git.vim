@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 15 Feb 2010
+" Last Modified: 24 Feb 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,18 +23,12 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.3, for Vim 7.0
+" Version: 1.4, for Vim 7.0
 "=============================================================================
 
 " Ensure b:git_dir exists.
 function! s:get_git_dir()"{{{
-  if !exists('b:git_dir')
-    let b:git_dir = s:system('rev-parse --git-dir')
-    if !s:get_error_status()
-      let b:git_dir = fnamemodify(split(b:git_dir, "\n")[0], ':p') . '/'
-    endif
-  endif
-  return b:git_dir
+  return finddir('.git', '.;')
 endfunction"}}}
 
 " Returns current git branch.
