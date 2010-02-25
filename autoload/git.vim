@@ -30,11 +30,18 @@
 function! s:get_git_dir()"{{{
   let l:git_dir = finddir('.git', ';')
   if l:git_dir != ''
-    let l:git_dir = fnamemodify(l:git_dir, ':p')
+    let l:git_dir = fnamemodify(l:git_dir, ':p:h')
   endif
 
   return l:git_dir
 endfunction"}}}
+
+" Get repository relative path.
+function! s:get_repository_path(fname)
+  let l:git_repository = fnamemodify(s:get_git_dir(), ':h')
+  let l:fpath = fnamemodify(a:fname, ':p')
+  return l:fpath[strlen(l:git_repository)+1 :]
+endfunction
 
 " Returns current git branch.
 " Call inside 'statusline' or 'titlestring'.
@@ -64,7 +71,7 @@ function! git#list_branches(arg_lead, cmd_line, cursor_pos)"{{{
 endfunction"}}}
 
 " List all git commits.
-function! git#list_git_commits(arg_lead, cmd_line, cursor_pos)"{{{
+function! git#list_commits(arg_lead, cmd_line, cursor_pos)"{{{
   let l:commits = split(s:system('log --pretty=format:%h'))
   if s:get_error_status()
     return []
@@ -145,13 +152,35 @@ endfunction"}}}
 function! git#diff(args)"{{{
   let l:git_output = s:system('diff ' . a:args . ' -- ' . s:expand('%'))
   if !strlen(git_output)
-    echo "No output from git command"
+    echo 'No output from git command'
     return
   endif
 
   call s:open_git_buffer(l:git_output)
   setlocal filetype=git-diff
 endfunction"}}}
+
+" Show vimdiff.
+function! git#vimdiff(args)
+  let l:git_output = s:system('cat-file -p ' . a:args . ':' . s:get_repository_path(s:expand('%')))
+  if l:git_output == ''
+    echo 'No output from git command'
+    return
+  endif
+  
+  let l:filetype_save = &filetype
+
+  diffthis
+
+  let l:git_command_edit_save = g:git_command_edit
+  let g:git_command_edit = 'vnew'
+  call s:open_git_buffer(l:git_output)
+  let g:git_command_edit = l:git_command_edit_save
+  
+  let &filetype = l:filetype_save
+  
+  diffthis
+endfunction
 
 " Show Status.
 function! git#status()"{{{
@@ -167,7 +196,7 @@ function! s:add_cursor_file()"{{{
   call s:refresh_git_status()
 endfunction"}}}
 function! s:remove_cursor_file()"{{{
-  call s:system('git reset HEAD -- ' . s:expand('<cfile>'))
+  call s:system('reset HEAD -- ' . s:expand('<cfile>'))
   call s:refresh_git_status()
 endfunction"}}}
 function! s:refresh_git_status()"{{{
@@ -200,12 +229,7 @@ function! git#commit(args)"{{{
   endif
 
   " Create COMMIT_EDITMSG file
-  let l:editor_save = $EDITOR
-  let $EDITOR = ''
-  let l:git_output = s:system('git commit ' . l:args)
-  let $EDITOR = l:editor_save
-
-  execute printf('%s %s/COMMIT_EDITMSG', g:git_command_edit, git_dir)
+  execute printf('%s %s/COMMIT_EDITMSG', g:git_command_edit, l:git_dir)
   setlocal filetype=git-status bufhidden=wipe
   let b:git_commit_args = a:args
   augroup GitCommit
@@ -220,7 +244,7 @@ function! s:write_commit_message()"{{{
 endfunction"}}}
 
 " Checkout.
-function! GitCheckout(args)"{{{
+function! git#checkout(args)"{{{
   call git#do_command('checkout ' . a:args)
 endfunction"}}}
 
@@ -233,20 +257,19 @@ function! git#push(args)"{{{
     let l:args = 'origin ' . git#branch()
   endif
   
-  echo s:system(join([g:git_bin, 'push'] + l:args))
+  echo s:system(join(insert(l:args, 'push')))
 endfunction"}}}
 
 " Pull.
 function! git#pull(args)"{{{
   "   call git#do_command('pull ' . a:args)
   " Wanna see progress...
-  echo s:system(join([g:git_bin, 'pull'] + a:args))
+  echo s:system(join(insert(a:args, 'pull')))
 endfunction"}}}
 
 " Show commit, tree, blobs.
 function! git#cat_file(file)"{{{
-  let l:file = s:expand(a:file)
-  let l:git_output = s:system('cat-file -p ' . l:file)
+  let l:git_output = s:system('cat-file -p ' . s:expand(a:file))
   if l:git_output == ''
     echo "No output from git command"
     return
@@ -257,7 +280,7 @@ endfunction"}}}
 
 " Show revision and author for each line.
 function! git#blame()"{{{
-  let l:git_output = s:system('blame -- ' . expand('%'))
+  let l:git_output = s:system('blame -- ' . s:expand('%'))
   if l:git_output == ''
     echo "No output from git command"
     return

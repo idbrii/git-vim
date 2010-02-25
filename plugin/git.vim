@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 24 Feb 2009
+" Last Modified: 25 Feb 2009
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,9 +23,15 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.4, for Vim 7.0
+" Version: 1.5, for Vim 7.0
 "-----------------------------------------------------------------------------
 " ChangeLog: "{{{
+"   1.5:
+"     - Added :GitVimDiff(Thanks harajune).
+"     - Fixed completion error.
+"     - Fixed git cat-file bug.
+"     - Fixed commit message.
+"
 "   1.4:
 "     - Fixed git current directory bug.
 "     - Fixed GitCommit bug.
@@ -88,6 +94,8 @@ endif
 if !exists('g:git_no_map_default') || !g:git_no_map_default
   nnoremap <Leader>gd :<C-u>GitDiff<Enter>
   nnoremap <Leader>gD :<C-u>GitDiff --cached<Enter>
+  nnoremap <Leader>gvd :<C-u>GitVimDiff<Enter>
+  nnoremap <Leader>gvD :<C-u>GitVimDiff --cached<Enter>
   nnoremap <Leader>gs :<C-u>GitStatus<Enter>
   nnoremap <Leader>gl :<C-u>GitLog<Enter>
   nnoremap <Leader>ga :<C-u>GitAdd<Enter>
@@ -99,6 +107,7 @@ endif
 
 command! -nargs=1 -complete=customlist,git#list_commits   GitCheckout call git#checkout(<q-args>)
 command! -nargs=* -complete=customlist,git#list_commits   GitDiff     call git#diff(<q-args>)
+command! -nargs=* -complete=customlist,git#list_commits   GitVimDiff  call git#vimdiff(<q-args>)
 command!          GitStatus           call git#status()
 command! -nargs=? -complete=file                        GitAdd      call git#add(<q-args>)
 command! -nargs=* GitLog              call git#log(<q-args>)
