@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 24 Feb 2010
+" Last Modified: 16 Mar 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.4, for Vim 7.0
+" Version: 1.5, for Vim 7.0
 "=============================================================================
 
 " Ensure b:git_dir exists.
@@ -224,14 +224,13 @@ function! git#commit(args)"{{{
   let l:git_dir = s:get_git_dir()
 
   let l:args = a:args
-  if l:args !~ '\v\k@<!(-a|--all)>' && s:system('diff --cached --stat') =~ '^\(\s\|\n\)*$'
-    let l:args .= ' -a'
-  endif
 
   " Create COMMIT_EDITMSG file
-  execute printf('%s %s/COMMIT_EDITMSG', g:git_command_edit, l:git_dir)
-  setlocal filetype=git-status bufhidden=wipe
-  let b:git_commit_args = a:args
+  call s:edit_git_buffer(l:git_dir.'/COMMIT_EDITMSG', '')
+  
+  setlocal filetype=gitcommit bufhidden=wipe
+  let b:git_commit_args = l:args
+  
   augroup GitCommit
     autocmd!
     autocmd BufWritePre  <buffer> g/^\s*#/d | setlocal fileencoding=utf-8
@@ -239,7 +238,7 @@ function! git#commit(args)"{{{
   augroup END
 endfunction"}}}
 function! s:write_commit_message()"{{{
-  call git#do_command('commit ' . b:git_commit_args . ' -F ' . expand('%'))
+  call git#do_command('commit ' . b:gitcommit_args . ' -F ' . expand('%'))
   autocmd! GitCommit * <buffer>
 endfunction"}}}
 
@@ -382,6 +381,18 @@ function! s:open_git_buffer(content)"{{{
   silent put=a:content
   keepjumps 0d
   setlocal nomodifiable
+
+  let b:is_git_msg_buffer = 1
+endfunction"}}}
+function! s:edit_git_buffer(file, content)"{{{
+  execute g:git_command_edit a:file
+
+  % delete _
+  setlocal buftype=nofile modifiable
+  execute 'setlocal bufhidden=' . g:git_bufhidden
+
+  silent put=a:content
+  keepjumps 0d
 
   let b:is_git_msg_buffer = 1
 endfunction"}}}
