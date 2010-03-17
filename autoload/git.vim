@@ -226,10 +226,12 @@ function! git#commit(args)"{{{
   let l:args = a:args
 
   " Create COMMIT_EDITMSG file
-  call s:edit_git_buffer(l:git_dir.'/COMMIT_EDITMSG', '')
+  call s:edit_git_buffer(l:git_dir.'/COMMIT_EDITMSG', s:system('status'))
   
   setlocal filetype=gitcommit bufhidden=wipe
   let b:git_commit_args = l:args
+  nnoremap <buffer> <Enter> :<C-u>call <SID>add_cursor_file()<Enter>
+  nnoremap <buffer> -       :<C-u>call <SID>remove_cursor_file()<Enter>
   
   augroup GitCommit
     autocmd!
@@ -238,7 +240,7 @@ function! git#commit(args)"{{{
   augroup END
 endfunction"}}}
 function! s:write_commit_message()"{{{
-  call git#do_command('commit ' . b:gitcommit_args . ' -F ' . expand('%'))
+  call git#do_command('commit ' . b:git_commit_args . ' -F ' . expand('%'))
   autocmd! GitCommit * <buffer>
 endfunction"}}}
 
@@ -388,7 +390,7 @@ function! s:edit_git_buffer(file, content)"{{{
   execute g:git_command_edit a:file
 
   % delete _
-  setlocal buftype=nofile modifiable
+  setlocal modifiable
   execute 'setlocal bufhidden=' . g:git_bufhidden
 
   silent put=a:content

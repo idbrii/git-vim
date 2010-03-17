@@ -27,7 +27,7 @@
 "-----------------------------------------------------------------------------
 " ChangeLog: "{{{
 "   1.6:
-"     - Improved git commit syntax.
+"     - Improved git commit.
 "
 "   1.5:
 "     - Added :GitVimDiff(Thanks harajune).
