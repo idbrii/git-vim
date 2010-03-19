@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 16 Mar 2010
+" Last Modified: 17 Mar 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.5, for Vim 7.0
+" Version: 1.6, for Vim 7.0
 "=============================================================================
 
 " Ensure b:git_dir exists.
@@ -92,60 +92,9 @@ endfunction"}}}
 
 " List all git commands.
 function! git#list_commands(arg_lead, cmd_line, cursor_pos)"{{{
-  let l:cmd = split(a:cmd_line)
-  let l:len_cmd = len(l:cmd)
-
-  if l:len_cmd <= 1
-    " Commands name completion.
-    let l:filter_cmd = printf('v:val =~ "^%s"', a:arg_lead)
-    return filter(['add', 'bisect', 'branch', 'checkout', 'clone', 'commit', 'diff', 'fetch',
-          \'grep', 'init', 'log', 'merge', 'mv', 'pull', 'push', 'rebase', 'reset', 'rm', 
-          \'show', 'status', 'tag'], l:filter_cmd)
-  else
-    " Commands argments completion.
-    let l:cmdname = l:cmd[1]
-    if l:cmdname == 'add' || l:cmdname == 'mv' || l:cmdname == 'rm'
-      let l:arg = get(l:cmd, 2, '')
-      return split(glob(l:arg.'*'), '\n')
-    elseif l:cmdname == 'branch'
-      return ListGitBranches(a:arg_lead, a:cmd_line, a:cursor_pos)
-    elseif l:cmdname == 'checkout' || l:cmdname == 'diff'
-      return ListGitCommits(a:arg_lead, a:cmd_line, a:cursor_pos)
-    elseif l:cmdname == 'clone'
-      return []
-    elseif l:cmdname == 'commit'
-      return []
-    elseif l:cmdname == 'fetch'
-      return []
-    elseif l:cmdname == 'grep'
-      return []
-    elseif l:cmdname == 'init'
-      return []
-    elseif l:cmdname == 'log'
-      return []
-    elseif l:cmdname == 'merge'
-      return []
-    elseif l:cmdname == 'pull'
-      return []
-    elseif l:cmdname == 'push'
-      return []
-    elseif l:cmdname == 'rebase'
-      return []
-    elseif l:cmdname == 'reset'
-      return []
-    elseif l:cmdname == 'show'
-      return []
-    elseif l:cmdname == 'status'
-      return []
-    elseif l:cmdname == 'tag'
-      return []
-    else
-      let l:filter_cmd = printf('v:val =~ "^%s"', a:arg_lead)
-      return filter(['add', 'bisect', 'branch', 'checkout', 'clone', 'commit', 'diff', 'fetch',
-            \'grep', 'init', 'log', 'merge', 'mv', 'pull', 'push', 'rebase', 'reset', 'rm', 
-            \'show', 'status', 'tag'], l:filter_cmd)
-    endif
-  endif
+  let l:args = split(a:cmd_line, '\s', 1)
+  let l:pattern = printf('v:val =~ "^%s"', escape(l:args[-1], '~" \.^$[]'))
+  return filter(git#completion#do_completion(l:args), l:pattern)
 endfunction"}}}
 
 " Show diff.
@@ -226,12 +175,10 @@ function! git#commit(args)"{{{
   let l:args = a:args
 
   " Create COMMIT_EDITMSG file
-  call s:edit_git_buffer(l:git_dir.'/COMMIT_EDITMSG', s:system('status'))
+  call s:edit_git_buffer(l:git_dir.'/COMMIT_EDITMSG', '')
   
   setlocal filetype=gitcommit bufhidden=wipe
   let b:git_commit_args = l:args
-  nnoremap <buffer> <Enter> :<C-u>call <SID>add_cursor_file()<Enter>
-  nnoremap <buffer> -       :<C-u>call <SID>remove_cursor_file()<Enter>
   
   augroup GitCommit
     autocmd!

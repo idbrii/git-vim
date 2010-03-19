@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 16 Mar 2009
+" Last Modified: 17 Mar 2009
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -28,6 +28,7 @@
 " ChangeLog: "{{{
 "   1.6:
 "     - Improved git commit.
+"     - Improved git completion.
 "
 "   1.5:
 "     - Added :GitVimDiff(Thanks harajune).
