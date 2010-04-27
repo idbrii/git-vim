@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 19 Mar 2010
+" Last Modified: 27 Apr 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.6, for Vim 7.0
+" Version: 1.7, for Vim 7.0
 "=============================================================================
 
 " Ensure b:git_dir exists.
@@ -37,11 +37,11 @@ function! s:get_git_dir()"{{{
 endfunction"}}}
 
 " Get repository relative path.
-function! s:get_repository_path(fname)
+function! s:get_repository_path(fname)"{{{
   let l:git_repository = fnamemodify(s:get_git_dir(), ':h')
   let l:fpath = fnamemodify(a:fname, ':p')
   return l:fpath[strlen(l:git_repository)+1 :]
-endfunction
+endfunction"}}}
 
 " Returns current git branch.
 " Call inside 'statusline' or 'titlestring'.
@@ -110,7 +110,7 @@ function! git#diff(args)"{{{
 endfunction"}}}
 
 " Show vimdiff.
-function! git#vimdiff(args)
+function! git#vimdiff(args)"{{{
   let l:git_output = s:system('cat-file -p ' . a:args . ':' . s:get_repository_path(s:expand('%')))
   if l:git_output == ''
     echo 'No output from git command'
@@ -129,7 +129,7 @@ function! git#vimdiff(args)
   let &filetype = l:filetype_save
   
   diffthis
-endfunction
+endfunction"}}}
 
 " Show Status.
 function! git#status()"{{{
@@ -324,7 +324,7 @@ function! s:open_git_buffer(content)"{{{
     execute g:git_command_edit
   endif
 
-  setlocal buftype=nofile readonly modifiable
+  setlocal buftype=nofile modifiable
   execute 'setlocal bufhidden=' . g:git_bufhidden
 
   silent put=a:content
@@ -337,11 +337,12 @@ function! s:edit_git_buffer(file, content)"{{{
   execute g:git_command_edit a:file
 
   % delete _
-  setlocal modifiable
+  setlocal buftype=acwrite
   execute 'setlocal bufhidden=' . g:git_bufhidden
 
   silent put=a:content
   keepjumps 0d
+  setlocal nomodified
 
   let b:is_git_msg_buffer = 1
 endfunction"}}}
@@ -354,3 +355,5 @@ function! s:expand(expr)"{{{
     return expand(a:expr)
   endif
 endfunction"}}}
+
+" vim: foldmethod=marker

@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 19 Mar 2009
+" Last Modified: 27 Apr 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,9 +23,13 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.6, for Vim 7.0
+" Version: 1.7, for Vim 7.0
 "-----------------------------------------------------------------------------
 " ChangeLog: "{{{
+"   1.7:
+"     - Improved fold.
+"     - Improved git commit buffer.
+"
 "   1.6:
 "     - Improved git commit.
 "     - Improved git completion.
@@ -81,7 +85,7 @@ if !exists('g:git_command_edit')
 endif
 
 if !exists('g:git_bufhidden')
-  let g:git_bufhidden = ''
+  let g:git_bufhidden = 'delete'
 endif
 
 if !exists('g:git_bin')
