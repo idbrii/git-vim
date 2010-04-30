@@ -175,7 +175,7 @@ function! git#commit(args)"{{{
   let l:args = a:args
 
   " Create COMMIT_EDITMSG file
-  call s:edit_git_buffer(l:git_dir.'/COMMIT_EDITMSG', '')
+  call s:edit_git_buffer(l:git_dir.'/COMMIT_EDITMSG')
   
   setlocal filetype=gitcommit bufhidden=wipe
   let b:git_commit_args = l:args
@@ -333,14 +333,12 @@ function! s:open_git_buffer(content)"{{{
 
   let b:is_git_msg_buffer = 1
 endfunction"}}}
-function! s:edit_git_buffer(file, content)"{{{
+function! s:edit_git_buffer(file)"{{{
   execute g:git_command_edit a:file
 
   % delete _
   execute 'setlocal bufhidden=' . g:git_bufhidden
 
-  silent put=a:content
-  keepjumps 0d
   setlocal nomodified
 
   let b:is_git_msg_buffer = 1
