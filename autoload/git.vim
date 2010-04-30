@@ -182,7 +182,7 @@ function! git#commit(args)"{{{
   
   augroup GitCommit
     autocmd!
-    autocmd BufWritePre  <buffer> g/^\s*#/d | setlocal fileencoding=utf-8
+    autocmd BufWritePre  <buffer> silent g/^\s*#/d | setlocal fileencoding=utf-8
     autocmd BufWritePost <buffer> call s:write_commit_message() | bdelete!
   augroup END
 endfunction"}}}
