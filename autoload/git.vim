@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 27 Apr 2010
+" Last Modified: 30 Apr 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -183,7 +183,7 @@ function! git#commit(args)"{{{
   augroup GitCommit
     autocmd!
     autocmd BufWritePre  <buffer> g/^\s*#/d | setlocal fileencoding=utf-8
-    autocmd BufWriteCmd <buffer> call s:write_commit_message() | bdelete!
+    autocmd BufWritePost <buffer> call s:write_commit_message() | bdelete!
   augroup END
 endfunction"}}}
 function! s:write_commit_message()"{{{
@@ -337,7 +337,6 @@ function! s:edit_git_buffer(file, content)"{{{
   execute g:git_command_edit a:file
 
   % delete _
-  setlocal buftype=acwrite
   execute 'setlocal bufhidden=' . g:git_bufhidden
 
   silent put=a:content
