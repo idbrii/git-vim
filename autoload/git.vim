@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 30 Apr 2010
+" Last Modified: 04 May 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -267,7 +267,12 @@ endfunction"}}}
 
 function! s:system(args)"{{{
   let l:command = g:git_bin . ' ' . a:args
-  return g:git_use_vimproc ? vimproc#system(l:command) : system(l:command)
+  let l:output = g:git_use_vimproc ? vimproc#system(l:command) : system(l:command)
+  
+  if &termencoding != '' && &termencoding != &encoding
+    let l:output = iconv(l:output, &termencoding, &encoding)
+  endif
+  return l:output
 endfunction"}}}
 function! s:get_error_status()"{{{
   return g:git_use_vimproc ? vimproc#get_last_status() : v:shell_error
