@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 04 May 2010
+" Last Modified: 25 May 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,9 +23,13 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.7, for Vim 7.0
+" Version: 1.8, for Vim 7.0
 "-----------------------------------------------------------------------------
 " ChangeLog: "{{{
+"   1.8:
+"     - Fixed mapping.
+"     - Changed g:git_no_map_default into g:git_no_default_mappings.
+"
 "   1.7:
 "     - Improved fold.
 "     - Improved git commit buffer.
@@ -101,17 +105,17 @@ if !exists('g:git_use_vimproc')
   let g:git_use_vimproc = 0
 endif
 
-if !exists('g:git_no_map_default') || !g:git_no_map_default
-  nnoremap <Leader>gd :<C-u>GitDiff<Enter>
-  nnoremap <Leader>gD :<C-u>GitDiff --cached<Enter>
-  nnoremap <Leader>gvd :<C-u>GitVimDiff<Enter>
-  nnoremap <Leader>gvD :<C-u>GitVimDiff --cached<Enter>
-  nnoremap <Leader>gs :<C-u>GitStatus<Enter>
-  nnoremap <Leader>gl :<C-u>GitLog<Enter>
-  nnoremap <Leader>ga :<C-u>GitAdd<Enter>
-  nnoremap <Leader>gA :<C-u>GitAdd <cfile><Enter>
-  nnoremap <Leader>gc :<C-u>GitCommit<Enter>
-  nnoremap <Leader>gp :<C-u>GitPullRebase<Enter>
+if !exists('g:git_no_default_mappings') || !g:git_no_default_mappings
+  nnoremap <silent><Leader>gd :<C-u>GitDiff<Enter>
+  nnoremap <silent><Leader>gD :<C-u>GitDiff --cached<Enter>
+  nnoremap <silent><Leader>gvd :<C-u>GitVimDiff<Enter>
+  nnoremap <silent><Leader>gvD :<C-u>GitVimDiff --cached<Enter>
+  nnoremap <silent><Leader>gs :<C-u>GitStatus<Enter>
+  nnoremap <silent><Leader>gl :<C-u>GitLog<Enter>
+  nnoremap <silent><Leader>ga :<C-u>GitAdd<Enter>
+  nnoremap <silent><Leader>gA :<C-u>GitAdd <cfile><Enter>
+  nnoremap <silent><Leader>gc :<C-u>GitCommit<Enter>
+  nnoremap <silent><Leader>gp :<C-u>GitPullRebase<Enter>
 endif
 
 

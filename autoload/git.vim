@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 05 May 2010
+" Last Modified: 25 May 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -136,8 +136,8 @@ function! git#status()"{{{
   let l:git_output = s:system('status')
   call s:open_git_buffer(l:git_output)
   setlocal filetype=git-status
-  nnoremap <buffer> <Enter> :<C-u>call <SID>add_cursor_file()<Enter>
-  nnoremap <buffer> -       :<C-u>call <SID>remove_cursor_file()<Enter>
+  nnoremap <silent><buffer> <Enter> :<C-u>call <SID>add_cursor_file()<Enter>
+  nnoremap <silent><buffer> -       :<C-u>call <SID>remove_cursor_file()<Enter>
 endfunction"}}}
 
 function! s:add_cursor_file()"{{{
