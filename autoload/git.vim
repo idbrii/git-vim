@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 25 May 2010
+" Last Modified: 11 Jul 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,7 +23,7 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.7, for Vim 7.0
+" Version: 1.8, for Vim 7.0
 "=============================================================================
 
 " Ensure b:git_dir exists.
@@ -141,7 +141,11 @@ function! git#status()"{{{
 endfunction"}}}
 
 function! s:add_cursor_file()"{{{
-  call git#add(s:expand('<cfile>'))
+  if getline('.') =~# '^#\tdeleted:'
+    call git#rm(s:expand('<cfile>'))
+  else
+    call git#add(s:expand('<cfile>'))
+  endif
   call s:refresh_git_status()
 endfunction"}}}
 function! s:remove_cursor_file()"{{{
@@ -166,6 +170,13 @@ function! git#add(expr)"{{{
   let l:file = s:expand(a:expr != '' ? a:expr : '%')
 
   call git#do_command('add ' . l:file)
+endfunction"}}}
+
+" Remove file from repository.
+function! git#rm(expr)"{{{
+  let l:file = s:expand(a:expr != '' ? a:expr : '%')
+
+  call git#do_command('rm ' . l:file)
 endfunction"}}}
 
 " Commit.

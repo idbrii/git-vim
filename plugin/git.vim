@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 25 May 2010
+" Last Modified: 11 Jul 2010
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -29,6 +29,7 @@
 "   1.8:
 "     - Fixed mapping.
 "     - Changed g:git_no_map_default into g:git_no_default_mappings.
+"     - Added git#rm().
 "
 "   1.7:
 "     - Improved fold.
@@ -65,13 +66,6 @@
 "   1.0:
 "     - Initial version.
 "     - Complete settings.
-""}}}
-"-----------------------------------------------------------------------------
-" TODO: "{{{
-"     - Make built-in command autoload.
-""}}}
-" Bugs"{{{
-"     -
 ""}}}
 "=============================================================================
 
