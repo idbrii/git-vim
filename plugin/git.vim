@@ -138,6 +138,9 @@ function! GitDiff(args)
 
     call <SID>OpenGitBuffer(git_output)
     setlocal filetype=git-diff
+
+    "Often times you want to return to git status from Git Diff
+    nnoremap <buffer> s :GitStatus<Enter>
 endfunction
 
 function! CompleteGitDiffCmd(arg_lead, cmd_line, cursor_pos)
@@ -182,13 +185,13 @@ function! GitStatus(args)
     if g:git_status_show_options == 1
         let instructions .=  "git-vim GitStatus\n\n"
 
-        let instructions .= "add    = a or Enter        edit             = e\n"
-        let instructions .= "diff   = d                 switch to commit = c\n"
-        let instructions .= "remove = r                 close window     = q\n"
-        let instructions .= "reset  = -                 hide options     = ?\n"
-        let instructions .= "                                               \n"
-        let instructions .= "       --- Requiring Confirmation ---          \n"
-        let instructions .= "checkout = o               remove untracked = u\n"
+        let instructions .= "add        = a or Enter     edit             = e\n"
+        let instructions .= "diff       = d              switch to commit = c\n"
+        let instructions .= "remove     = r              close window     = q\n"
+        let instructions .= "reset      = -              hide options     = ?\n"
+        let instructions .= "                                                \n"
+        let instructions .= "       --- Requiring Confirmation ---           \n"
+        let instructions .= "checkout = o                remove untracked = u\n"
         let instructions .= "\n"
     else
         let instructions .= "git-vim GitStatus --- type ? for options\n\n"
