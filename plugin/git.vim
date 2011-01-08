@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 11 Jul 2010
+" Last Modified: 08 Jan 2011.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -23,9 +23,12 @@
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 " }}}
-" Version: 1.8, for Vim 7.0
+" Version: 1.9, for Vim 7.0
 "-----------------------------------------------------------------------------
 " ChangeLog: "{{{
+"   1.9:
+"     - Added :GitFixup command.
+"
 "   1.8:
 "     - Fixed mapping.
 "     - Changed g:git_no_map_default into g:git_no_default_mappings.
@@ -100,16 +103,17 @@ if !exists('g:git_use_vimproc')
 endif
 
 if !exists('g:git_no_default_mappings') || !g:git_no_default_mappings
-  nnoremap <silent><Leader>gd :<C-u>GitDiff<Enter>
-  nnoremap <silent><Leader>gD :<C-u>GitDiff --cached<Enter>
-  nnoremap <silent><Leader>gvd :<C-u>GitVimDiff<Enter>
-  nnoremap <silent><Leader>gvD :<C-u>GitVimDiff --cached<Enter>
-  nnoremap <silent><Leader>gs :<C-u>GitStatus<Enter>
-  nnoremap <silent><Leader>gl :<C-u>GitLog<Enter>
-  nnoremap <silent><Leader>ga :<C-u>GitAdd<Enter>
-  nnoremap <silent><Leader>gA :<C-u>GitAdd <cfile><Enter>
-  nnoremap <silent><Leader>gc :<C-u>GitCommit<Enter>
-  nnoremap <silent><Leader>gp :<C-u>GitPullRebase<Enter>
+  nnoremap <silent><Leader>gd :<C-u>GitDiff<CR>
+  nnoremap <silent><Leader>gD :<C-u>GitDiff<Space>--cached<CR>
+  nnoremap <silent><Leader>gvd :<C-u>GitVimDiff<CR>
+  nnoremap <silent><Leader>gvD :<C-u>GitVimDiff<Space>--cached<CR>
+  nnoremap <silent><Leader>gs :<C-u>GitStatus<CR>
+  nnoremap <silent><Leader>gl :<C-u>GitLog<CR>
+  nnoremap <silent><Leader>ga :<C-u>GitAdd<CR>
+  nnoremap <silent><Leader>gA :<C-u>GitAdd<Space><cfile><CR>
+  nnoremap <silent><Leader>gc :<C-u>GitCommit<CR>
+  nnoremap <silent><Leader>gp :<C-u>GitPullRebase<CR>
+  nnoremap <silent><Leader>gf :<C-u>GitFixup<Space>
 endif
 
 
@@ -128,6 +132,7 @@ command!          GitVimDiffMergeDone call git#vimdiff_merge_done()
 command! -nargs=* GitPull             call git#pull(<q-args>)
 command!          GitPullRebase       call git#pull('--rebase')
 command! -nargs=* GitPush             call git#push(<q-args>)
+command! -nargs=* GitFixup            call git#fixup(<q-args>)
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 11 Jul 2010
+" Last Modified: 08 Jan 2011.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -224,6 +224,11 @@ function! git#pull(args)"{{{
   "   call git#do_command('pull ' . a:args)
   " Wanna see progress...
   echo s:system(join(insert(a:args, 'pull')))
+endfunction"}}}
+
+" Fixup.
+function! git#fixup(args)"{{{
+  echo s:system(join(insert(a:args, 'commit --amend -C HEAD --date=now ')))
 endfunction"}}}
 
 " Show commit, tree, blobs.
