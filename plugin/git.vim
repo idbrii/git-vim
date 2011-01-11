@@ -22,10 +22,6 @@ if !exists('g:git_highlight_blame')
     let g:git_highlight_blame = 0
 endif
 
-if !exists('g:git_blame_width')
-    let g:git_blame_width = 20
-endif
-
 if !exists('g:git_status_show_options')
     let g:git_status_show_options = 0
 endif
@@ -415,7 +411,7 @@ function! GitBlame()
 
     setlocal modifiable
     silent %s/\d\d\d\d\zs \+\d\+).*//
-    execute 'vertical resize' g:git_blame_width
+    vertical resize 20
     setlocal nomodifiable
     setlocal nowrap scrollbind
 
