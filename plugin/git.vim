@@ -26,6 +26,10 @@ if !exists('g:git_status_show_options')
     let g:git_status_show_options = 0
 endif
 
+if !exists('g:git_status_command_to_confirm')
+    let g:git_status_command_to_confirm = ''
+endif
+
 if !exists('g:git_no_map_default') || !g:git_no_map_default
     nnoremap <Leader>gd :GitDiff<Enter>
     nnoremap <Leader>gD :GitDiff --cached<Enter>
@@ -134,6 +138,9 @@ function! GitDiff(args)
 
     call <SID>OpenGitBuffer(git_output)
     setlocal filetype=git-diff
+
+    "Often times you want to return to git status from Git Diff
+    nnoremap <buffer> s :GitStatus<Enter>
 endfunction
 
 function! CompleteGitDiffCmd(arg_lead, cmd_line, cursor_pos)
@@ -169,16 +176,25 @@ function! GitStatus(args)
         echoe 'GitStatus ignores arguments'
     endif
 
-    if g:git_status_show_options == 1
-        let instructions =  "git-vim GitStatus\n\n"
+    let instructions = ""
 
-        let instructions .= "add    = a or Enter        edit             = e\n"
-        let instructions .= "diff   = d                 switch to commit = c\n"
-        let instructions .= "remove = r                 close window     = q\n"
-        let instructions .= "reset  = -                 hide options     = ?\n"
+    if g:git_status_command_to_confirm > ""
+        let instructions .= "*** hit y to confirm, otherwise hit n ***\n\n"
+    endif
+
+    if g:git_status_show_options == 1
+        let instructions .=  "git-vim GitStatus\n\n"
+
+        let instructions .= "add        = a or Enter     edit             = e\n"
+        let instructions .= "diff       = d              switch to commit = c\n"
+        let instructions .= "remove     = r              close window     = q\n"
+        let instructions .= "reset      = -              hide options     = ?\n"
+        let instructions .= "                                                \n"
+        let instructions .= "       --- Requiring Confirmation ---           \n"
+        let instructions .= "checkout = o                remove untracked = u\n"
         let instructions .= "\n"
     else
-        let instructions = "git-vim GitStatus --- type ? for options\n\n"
+        let instructions .= "git-vim GitStatus --- type ? for options\n\n"
     endif
 
     let git_output = instructions . s:SystemGit('status')
@@ -199,6 +215,18 @@ function! GitStatus(args)
     nnoremap <buffer> c       :q<Enter>:GitCommit<Enter>i
     nnoremap <buffer> q       :q<Enter>
 
+    " Here are the options that require confirmation
+    if g:git_status_command_to_confirm == "checkout"
+        nnoremap <buffer> y $:silent !git checkout -- =expand('<cfile>')<Enter><Enter>:let g:git_status_command_to_confirm=""<Enter>:call <SID>RefreshGitStatus()<Enter>
+        nnoremap <buffer> n :let g:git_status_command_to_confirm=""<Enter>:call <SID>RefreshGitStatus()<Enter>
+    elseif g:git_status_command_to_confirm == "remove_untracked"
+        nnoremap <buffer> y $:!rm <cfile><Enter><Enter>:let g:git_status_command_to_confirm=""<Enter>:call <SID>RefreshGitStatus()<Enter>
+        nnoremap <buffer> n :let g:git_status_command_to_confirm=""<Enter>:call <SID>RefreshGitStatus()<Enter>
+    else
+        nnoremap <buffer> o :let g:git_status_command_to_confirm="checkout"<Enter>:call <SID>RefreshGitStatus()<Enter>
+        nnoremap <buffer> u :let g:git_status_command_to_confirm="remove_untracked"<Enter>:call <SID>RefreshGitStatus()<Enter>
+    endif
+
     if g:git_status_show_options == 1
         nmap <buffer> ? :let g:git_status_show_options = 0<Enter>:call <SID>RefreshGitStatus()<Enter>
     else
@@ -210,6 +238,11 @@ function! s:RefreshGitStatus()
     let pos_save = getpos('.')
     GitStatus
     call setpos('.', pos_save)
+
+    " If the confirmation message is being shown, then move the cursor down
+    if g:git_status_command_to_confirm > ""
+        normal jj
+    endif
 endfunction
 
 " Show Log.
