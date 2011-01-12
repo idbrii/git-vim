@@ -370,12 +370,16 @@ function! GitCommit(args)
     " signoff already handled, so don't pass through -s/--signoff again
     let args = substitute(args, '\k\@<!\(-s\|--signoff\)\>', '', 'g')
 
+    let cur_dir = getcwd()
     execute printf('%s %sCOMMIT_EDITMSG', g:git_command_edit, git_dir)
+    execute printf("lcd %s", cur_dir)
+
     setlocal filetype=gitcommit bufhidden=wipe
     call cursor( 1, 1 )
     augroup GitCommit
-        autocmd BufRead <buffer> setlocal fileencoding=utf-8
-        execute printf("autocmd BufUnload <buffer> call GitDoCommand('commit %s --cleanup=strip -F ' . expand('<afile>')) | autocmd! GitCommit * <buffer>", args)
+        autocmd BufWritePre  <buffer> g/^#\|^\s*$/d | setlocal fileencoding=utf-8
+        execute printf("autocmd BufEnter <buffer> lcd %s", cur_dir)
+        execute printf("autocmd BufUnload <buffer> call GitDoCommand('commit %s -F ' . expand('%%')) | autocmd! GitCommit * <buffer>", args)
     augroup END
 endfunction
 "
@@ -427,11 +431,16 @@ function! GitCatFile(file)
 endfunction
 
 " Show revision and author for each line.
-function! GitBlame()
+function! GitBlame(...)
+    let l:git_blame_width = 20
     let git_output = s:SystemGit('blame -- ' . expand('%'))
     if !strlen(git_output)
         echo "No output from git command"
         return
+    endif
+
+    if strlen(a:1)
+        let l:git_blame_width = a:1
     endif
 
     setlocal noscrollbind
@@ -444,7 +453,7 @@ function! GitBlame()
 
     setlocal modifiable
     silent %s/\d\d\d\d\zs \+\d\+).*//
-    vertical resize 20
+    exe 'vertical resize ' . git_blame_width
     setlocal nomodifiable
     setlocal nowrap scrollbind
 
@@ -457,6 +466,9 @@ function! GitBlame()
 
     syncbind
 endfunction
+
+
+
 
 " Experimental
 function! s:DoHighlightGitBlame()
@@ -550,7 +562,13 @@ function! GitDoCommand(args)
 endfunction
 
 function! s:SystemGit(args)
-    return system(g:git_bin . ' ' . a:args . '< /dev/null')
+    " workardound for MacVim, on which shell does not inherit environment
+    " variables
+    if has('mac') && &shell =~ 'sh$'
+        return system('EDITOR="" '. g:git_bin . ' ' . a:args)
+    else
+        return system(g:git_bin . ' ' . a:args)
+    endif
 endfunction
 
 " Show vimdiff with another revision of the file
@@ -709,7 +727,8 @@ command! -nargs=? GitRm               call GitRm(<q-args>)
 command! -nargs=* GitLog              call GitLog(<q-args>)
 command! -nargs=* GitCommit           call GitCommit(<q-args>)
 command! -nargs=1 GitCatFile          call GitCatFile(<q-args>)
-command!          GitBlame            call GitBlame()
+command! -nargs=? GitBlame            call GitBlame(<q-args>)
+command! -nargs=+ Git                 call GitDoCommand(<q-args>)
 command! -nargs=? GitVimDiff          call GitVimDiff(<q-args>)
 command!          GitVimDiffMerge     call GitVimDiffMerge()
 command!          GitVimDiffMergeDone call GitVimDiffMergeDone()
