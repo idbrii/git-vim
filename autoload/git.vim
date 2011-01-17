@@ -2,7 +2,7 @@
 " FILE: git.vim
 " AUTHOR: motemen <motemen@gmail.com>(Original)
 "         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
-" Last Modified: 08 Jan 2011.
+" Last Modified: 17 Jan 2011.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -228,7 +228,7 @@ endfunction"}}}
 
 " Fixup.
 function! git#fixup(args)"{{{
-  echo s:system(join(insert(a:args, 'commit --amend -C HEAD --date=now ')))
+  echo s:system(join(insert(a:args, 'commit --amend -C HEAD --date= ')))
 endfunction"}}}
 
 " Show commit, tree, blobs.
