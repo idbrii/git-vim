@@ -2,6 +2,10 @@
 " License: The MIT License
 " URL:     http://github.com/motemen/git-vim/
 
+if !exists('g:git_always_verbose_commit')
+    let g:git_always_verbose_commit = 0
+endif
+
 if !exists('g:git_command_edit')
     let g:git_command_edit = 'new'
 endif
@@ -212,7 +216,13 @@ function! GitStatus(args)
     nnoremap <buffer> r       $:GitRm   <cfile><Enter>:call <SID>RefreshGitStatus()<Enter>
     nnoremap <buffer> -       $:silent  !git reset HEAD -- =expand('<cfile>')<Enter><Enter>:call <SID>RefreshGitStatus()<Enter>
     nnoremap <buffer> e       $:e       <cfile><Enter>
-    nnoremap <buffer> c       :q<Enter>:GitCommit<Enter>i
+    if g:git_always_verbose_commit
+        " For verbose commits, we show the staged diff using most of the
+        " window and open the commit on top of it
+        nnoremap <buffer> c       :q<Enter>:GitDiff --staged<Enter>:wincmd _<Enter>:GitCommit<Enter>i
+    else
+        nnoremap <buffer> c       :q<Enter>:GitCommit<Enter>i
+    endif
     nnoremap <buffer> q       :q<Enter>
 
     " Here are the options that require confirmation
