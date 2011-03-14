@@ -198,7 +198,7 @@ function! git#commit(args)"{{{
   augroup END
 endfunction"}}}
 function! s:write_commit_message()"{{{
-  call git#do_command('commit ' . b:git_commit_args . ' -F ' . expand('%'))
+  call git#do_command('commit ' . b:git_commit_args . ' -F ' . expand('%:p'))
   autocmd! GitCommit * <buffer>
 endfunction"}}}
 
