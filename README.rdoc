@@ -35,5 +35,8 @@ Git-vim provides:
 [<Leader>gc] :GitCommit
 [<Leader>gb] :GitBlame
 
+=== In git-status buffer
+[<Enter>]    :GitAdd <cfile>
+
 == License
 The MIT License
