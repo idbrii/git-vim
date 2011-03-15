@@ -33,6 +33,8 @@ endif
 if !exists('g:git_no_map_default') || !g:git_no_map_default
     nnoremap <Leader>gd :GitDiff<Enter>
     nnoremap <Leader>gD :GitDiff --cached<Enter>
+    nnoremap <Leader>gvd :GitVimDiff<Enter>
+    nnoremap <Leader>gvD :GitVimDiff --cached<Enter>
     nnoremap <Leader>gs :GitStatus<Enter>
     nnoremap <Leader>gl :GitLog<Enter>
     nnoremap <Leader>ga :GitAdd<Enter>
