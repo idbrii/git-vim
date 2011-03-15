@@ -42,6 +42,7 @@ if !exists('g:git_no_map_default') || !g:git_no_map_default
     nnoremap <Leader>gc :GitCommit<Enter>
     nnoremap <Leader>gb :GitBlame<Enter>
     nnoremap <Leader>gp :GitPullRebase<Enter>
+    nnoremap <Leader>gP :GitPullRebase<Enter>
     nnoremap <Leader>gg :GitGrep -e '<C-R>=getreg('/')<Enter>'<Enter>
 endif
 
