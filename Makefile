@@ -1,5 +1,6 @@
 
-INSTALL=install
+#INSTALL=install
+INSTALL=ginstall # For MacOS X with gnu ports
 INSTALL_FILE=${INSTALL} -m 0644 -v -D
 
 FILES_FOR_INSTALL= $(wildcard plugin/git*.vim) \
