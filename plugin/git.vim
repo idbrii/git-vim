@@ -1,13 +1,93 @@
-" Author:  motemen <motemen@gmail.com>
-" License: The MIT License
-" URL:     http://github.com/motemen/git-vim/
+"=============================================================================
+" FILE: git.vim
+" AUTHOR: motemen <motemen@gmail.com>(Original)
+"         Shougo Matsushita <Shougo.Matsu@gmail.com>(Modified)
+" Last Modified: 08 Jan 2011.
+" License: MIT license  {{{
+"     Permission is hereby granted, free of charge, to any person obtaining
+"     a copy of this software and associated documentation files (the
+"     "Software"), to deal in the Software without restriction, including
+"     without limitation the rights to use, copy, modify, merge, publish,
+"     distribute, sublicense, and/or sell copies of the Software, and to
+"     permit persons to whom the Software is furnished to do so, subject to
+"     the following conditions:
+"
+"     The above copyright notice and this permission notice shall be included
+"     in all copies or substantial portions of the Software.
+"
+"     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+"     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+"     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+"     IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+"     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+"     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+"     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+" }}}
+" Version: 1.9, for Vim 7.0
+"-----------------------------------------------------------------------------
+" ChangeLog: "{{{
+"   1.9:
+"     - Added :GitFixup command.
+"
+"   1.8:
+"     - Fixed mapping.
+"     - Changed g:git_no_map_default into g:git_no_default_mappings.
+"     - Added git#rm().
+"
+"   1.7:
+"     - Improved fold.
+"     - Improved git commit buffer.
+"     - Improved system().
+"
+"   1.6:
+"     - Improved git commit.
+"     - Improved git completion.
+"     - Delete buffer when git commit.
+"
+"   1.5:
+"     - Added :GitVimDiff(Thanks harajune).
+"     - Fixed completion error.
+"     - Fixed git cat-file bug.
+"     - Fixed commit message.
+"
+"   1.4:
+"     - Fixed git current directory bug.
+"     - Fixed GitCommit bug.
+"
+"   1.3:
+"     - Use autoload.
+"     - Refactored.
+"
+"   1.2:
+"     - Don't delete blank line.
+"
+"   1.1:
+"     - Merged latest version.
+"     - Supported vimproc.
+"     - Added g:git_use_vimproc option.
+"
+"   1.0:
+"     - Initial version.
+"     - Complete settings.
+""}}}
+"=============================================================================
+
+if v:version < 700
+    echoerr 'git-vim does not work this version of Vim "' . v:version . '".'
+    finish
+elseif exists('g:loaded_git_vim')
+    finish
+endif
+
+let s:save_cpo = &cpo
+set cpo&vim
 
 if !exists('g:git_command_edit')
     let g:git_command_edit = 'new'
 endif
 
 if !exists('g:git_bufhidden')
-    let g:git_bufhidden = ''
+    let g:git_bufhidden = 'delete'
 endif
 
 if !exists('g:git_bin')
@@ -15,7 +95,11 @@ if !exists('g:git_bin')
 endif
 
 if !exists('g:git_author_highlight')
-    let g:git_author_highlight = { }
+    let g:git_author_highlight = {}
+endif
+
+if !exists('g:git_use_vimproc')
+    let g:git_use_vimproc = 0
 endif
 
 if !exists('g:git_highlight_blame')
@@ -30,23 +114,27 @@ if !exists('g:git_status_command_to_confirm')
     let g:git_status_command_to_confirm = ''
 endif
 
-if !exists('g:git_no_map_default') || !g:git_no_map_default
-    nnoremap <Leader>gd :GitDiff<Enter>
-    nnoremap <Leader>gD :GitDiff --cached<Enter>
-    nnoremap <Leader>gvd :GitVimDiff<Enter>
-    nnoremap <Leader>gvD :GitVimDiff --cached<Enter>
-    nnoremap <Leader>gs :GitStatus<Enter>
-    nnoremap <Leader>gl :GitLog<Enter>
-    nnoremap <Leader>ga :GitAdd<Enter>
-    nnoremap <Leader>gA :GitAdd <cfile><Enter>
-    nnoremap <Leader>gr :GitRm<Enter>
-    nnoremap <Leader>gR :GitRm <cfile><Enter>
-    nnoremap <Leader>gc :GitCommit<Enter>
-    nnoremap <Leader>gb :GitBlame<Enter>
-    nnoremap <Leader>gp :GitPullRebase<Enter>
-    nnoremap <Leader>gP :GitPullRebase<Enter>
-    nnoremap <Leader>gg :GitGrep -e '<C-R>=getreg('/')<Enter>'<Enter>
+if !exists('g:git_no_default_mappings') || !g:git_no_default_mappings
+    nnoremap <silent><Leader>gd :<C-u>GitDiff<CR>
+    nnoremap <silent><Leader>gD :<C-u>GitDiff<Space>--cached<CR>
+    nnoremap <silent><Leader>gvd :<C-u>GitVimDiff<CR>
+    nnoremap <silent><Leader>gvD :<C-u>GitVimDiff<Space>--cached<CR>
+    nnoremap <silent><Leader>gs :<C-u>GitStatus<CR>
+    nnoremap <silent><Leader>gl :<C-u>GitLog<CR>
+    nnoremap <silent><Leader>ga :<C-u>GitAdd<CR>
+    nnoremap <silent><Leader>gA :<C-u>GitAdd<Space><cfile><CR>
+    nnoremap <silent><Leader>gr :<C-u>GitRm<CR>
+    nnoremap <silent><Leader>gR :<C-u>GitRm<Space><cfile><CR>
+    nnoremap <silent><Leader>gc :<C-u>GitCommit<CR>
+    nnoremap <silent><Leader>gp :<C-u>GitPullRebase<CR>
+    nnoremap <silent><Leader>gP :<C-u>GitPullRebase<CR>
+    nnoremap <silent><Leader>gf :<C-u>GitFixup<Space>
+    nnoremap <silent><Leader>gb :<C-u>GitBlame<CR>
+    nnoremap <silent><Leader>gg :<C-u>GitGrep<Space>-e<Space>'<C-R>=getreg('/')<CR>'<CR>
 endif
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 
 " Ensure b:git_dir exists.
 function! s:GetGitDir()
@@ -340,6 +428,10 @@ function! GitRm(expr)
     let file = s:Expand(strlen(a:expr) ? a:expr : '%')
 
     call GitDoCommand('rm ' . file)
+endfunction
+
+function! GitFixup(args)
+    call GitDoCommand('commit --amend -C HEAD --date= ' . a:args)
 endfunction
 
 " Commit.
@@ -722,13 +814,21 @@ function! s:SplitCmd(cmd)
     return l:split_cmd
 endfunction
 
+function! CompleteGitCommitCmd(args)
+  return ['-m', 'a', '-v', '--amend']
+endfunction
+
+function! CompleteGitLogCmd(args)
+    return ['-p', '--pretty=short', '--grep=', '--left-right']
+endfunction
+
 command! -nargs=1 -complete=customlist,CompleteGitCheckoutCmd GitCheckout         call GitCheckout(<q-args>)
 command! -nargs=* -complete=customlist,CompleteGitDiffCmd     GitDiff             call GitDiff(<q-args>)
 command! -nargs=*                                             GitStatus           call GitStatus(<q-args>)
 command! -nargs=? -complete=customlist,CompleteGitAddCmd      GitAdd              call GitAdd(<f-args>)
 command! -nargs=? GitRm               call GitRm(<q-args>)
-command! -nargs=* GitLog              call GitLog(<q-args>)
-command! -nargs=* GitCommit           call GitCommit(<q-args>)
+command! -nargs=* -complete=customlist,CompleteGitLogCmd      GitLog              call GitLog(<q-args>)
+command! -nargs=* -complete=customlist,CompleteGitCommitCmd   GitCommit           call GitCommit(<q-args>)
 command! -nargs=1 GitCatFile          call GitCatFile(<q-args>)
 command! -nargs=? GitBlame            call GitBlame(<q-args>)
 command! -nargs=+ Git                 call GitDoCommand(<q-args>)
@@ -739,8 +839,11 @@ command! -nargs=* GitPull             call GitPull(<q-args>)
 command!          GitPullRebase       call GitPull('--rebase')
 command! -nargs=* GitPush             call GitPush(<q-args>)
 command! -nargs=* GitGrep             call GitGrep(<q-args>)
+command! -nargs=* GitFixup            call GitFixup(<q-args>)
 
 command! -nargs=+ -complete=customlist,CompleteGitCmd         Git                 call Git(<q-args>)
 cabbrev git <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'Git' : 'git')<CR>
 
-" vim: set et sw=4 ts=4:
+let g:loaded_git_vim = 1
+
+" vim: foldmethod=marker
