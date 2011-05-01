@@ -121,7 +121,7 @@ if !exists('g:git_no_default_mappings') || !g:git_no_default_mappings
     nnoremap <silent><Leader>gvD :<C-u>GitVimDiff<Space>--cached<CR>
     nnoremap <silent><Leader>gs :<C-u>GitStatus<CR>
     nnoremap <silent><Leader>gl :<C-u>GitLog<CR>
-    nnoremap <silent><Leader>ga :<C-u>GitAdd<CR>
+    nnoremap <silent><Leader>ga :<C-u>GitAdd<Space>%<CR>
     nnoremap <silent><Leader>gA :<C-u>GitAdd<Space><cfile><CR>
     nnoremap <silent><Leader>gr :<C-u>GitRm<CR>
     nnoremap <silent><Leader>gR :<C-u>GitRm<Space><cfile><CR>
@@ -472,7 +472,7 @@ function! GitCommit(args)
     setlocal filetype=gitcommit bufhidden=wipe
     call cursor( 1, 1 )
     augroup GitCommit
-        autocmd BufWritePre  <buffer> g/^#\|^\s*$/d | setlocal fileencoding=utf-8
+        autocmd BufWritePre  <buffer> g/^#/d | setlocal fileencoding=utf-8
         execute printf("autocmd BufEnter <buffer> lcd %s", cur_dir)
         execute printf("autocmd BufUnload <buffer> call GitDoCommand('commit %s -F ' . expand('%%')) | autocmd! GitCommit * <buffer>", args)
     augroup END
