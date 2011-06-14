@@ -118,7 +118,8 @@ if !exists('g:git_status_command_to_confirm')
     let g:git_status_command_to_confirm = ''
 endif
 
-if !exists('g:git_no_default_mappings') || !g:git_no_default_mappings
+if (!exists("no_plugin_maps") || ! no_plugin_maps) &&
+      \ (!exists('g:git_no_default_mappings') || !g:git_no_default_mappings)
     nnoremap <silent><Leader>gd :<C-u>GitDiff<CR>
     nnoremap <silent><Leader>gD :<C-u>GitDiff<Space>--cached<CR>
     nnoremap <silent><Leader>gvd :<C-u>GitVimDiff<CR>
