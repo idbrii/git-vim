@@ -390,7 +390,7 @@ function! GitCommit(args)
     setlocal filetype=gitcommit bufhidden=wipe
     call cursor( 1, 1 )
     augroup GitCommit
-        autocmd BufWritePre  <buffer> g/^#\|^\s*$/d | setlocal fileencoding=utf-8
+        autocmd BufWritePre  <buffer> g/^#/d | setlocal fileencoding=utf-8
         execute printf("autocmd BufEnter <buffer> lcd %s", cur_dir)
         execute printf("autocmd BufUnload <buffer> call GitDoCommand('commit %s -F ' . expand('%%')) | autocmd! GitCommit * <buffer>", args)
     augroup END
