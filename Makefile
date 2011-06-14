@@ -1,5 +1,10 @@
+UNAME := $(shell uname)
 
-INSTALL=install
+ifeq ($(UNAME), Darwin)
+	INSTALL=ginstall # For MacOS X with gnu ports
+else
+	INSTALL=install
+endif
 INSTALL_FILE=${INSTALL} -m 0644 -v -D
 
 FILES_FOR_INSTALL= $(wildcard plugin/git*.vim) \

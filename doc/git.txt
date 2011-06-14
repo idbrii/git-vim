@@ -1,85 +1,59 @@
-*git.txt*	Git Plugin for Vim				*Git* *git*
+*git.txt*     Plugin for working with Git SCM repositories
 
-This plugin provides commands for calling Git functions from Vim as well as
-syntax highlighting for various Git files.
+Author: Daniel C <333222@gmail.com>
 
-1. Commands		|git-commands|
-2. Key mappingss	|git-keymaps|
+|git-introduction| Introduction
+|git-commands|     Commands
+|git-keymaps|      Keymaps
+|git-status|       In git-status buffer
 
-==============================================================================
-1. Commands						*git-commands*
+INTRODUCTION					*git-introduction*
 
-If a command has an [args] argument, it is passed to appropriate git command.
+Git-vim provides:
+* Plugin files for calling git functions from inside Vim
+* Syntax files for git displays
 
-							*git-command*
-:Git [args]			Run git [args] in shell and display output.
+COMMANDS					*git-commands*
 
-							*git-add*
-:GitAdd [afile]			Stage changes in [afile] or current file
-				if [afile] is not specified.
+:GitAdd {file}		git-add {file} or current file if not specified.
 
-							*git-rm*
-:GitRm [afile]			Remove [afile] or current file if [afile] is
-				not specified.
+:GitCommit {args}	git-commit.
 
-							*git-blame*
-:GitBlame			Show what revision and author last modified
-				each line of current file.
+:GitStatus		Show git-status of current file or repository.
 
-							*git-checkout*
-:GitCheckout [args]		Checkout a branch or paths to the working
-				tree.
+:GitLog			Show git-log of current file or repository.
 
-							*git-commit*
-:GitCommit [args]		Record changes to the repository.  If no files
-				were added to index (either using *:GitAdd* or
-				any other tool) it commits everything like >
-					git-commit -a
-<
+:GitCheckout {args}	git-checkout. Completes git commits.
 
-							*git-diff*
-:GitDiff [args]			Show changes between commits and working tree.
+:GitDiff {args}		git-diff. Completes git commits.
 
-							*git-log*
-:GitLog [args]			Show commit logs of current file.
+:GitPull {args}		git-pull.
 
-							*git-pull*
-:GitPull [args]			Fetch from and merge with another repository
-				or local branch.
+:GitPullRebase		git-pull --rebase.<
 
-							*git-pull-rebase*
-:GitPullRebase			Same as :GitPull with --rebase argument.
+:GitPush {args}		git-push. Defaults to git push origin {current
+			-branch}.
 
-							*git-push*
-:GitPush [args]			Update remote refs along with associated
-				objects. Unless specified in [args], it will
-				push to origin/<CURRENT_BRANCH>.
+:GitCatFile {args}	git-cat-file.
 
-							*git-status*
-:GitStatus			Show working tree status.  You can use keymaps
-				in the newly opened buffer to manipulate files.
+:Git {args}		Does any git command.
 
-							*git-vimdiff-merge*
-:GitVimDiffMerge [args]		Show vimdiff for merge.
+:GitVimDiffMerge	Experimental. Call this command on unmerged file to
+			enter vimdiff mode.
 
-							*git-vimdiff-merge-done*
-:GitVimDiffMergeDone		Mark conflicts as resolved and quit diff mode.
+:GitVimDiffMergeDone	Call this command after merging.
 
-==============================================================================
-2. Key mappings						*git-keymaps*
+KEYMAPS						*git-keymaps*
 
-All mappings use <Leader> to avoid conflicts with default commands.  See
-<mapleader> for details.
+<leader>gd			:GitDiff
+<leader>gD			:GitDiff --cached
+<leader>gs			:GitStatus
+<leader>gl			:GitLog
+<leader>ga			:GitAdd
+<leader>gA			:GitAdd {file}
+<leader>gc			:GitCommit
 
-<Leader>gd		:GitDiff
-<Leader>gD		:GitDiff --cached
-<Leader>gs		:GitStatus
-<Leader>gl		:GitLog
-<Leader>ga		:GitAdd
-<Leader>gA		:GitAdd
-<Leader>gr		:GitRm
-<Leader>gc		:GitCommit
-<Leader>gp		:GitPullRebase
+In git-status buffer:
 
-==============================================================================
- vim:tw=78:ts=8:ft=help:norl:noexpandtab
+<enter>			:GitAdd {file}
+
